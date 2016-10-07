@@ -4,8 +4,9 @@ import shutil
 import zipfile
 
 
-def rename(path, rm=False):
+def rename(path, rm_dirs=False, rm_zips=False):
     if os.path.isdir(path):
+        print(path)
 
         # replace backslash with forward slash so all paths are the same for windows, osx, linux
         path = path.replace("\\", "/")
@@ -14,7 +15,7 @@ def rename(path, rm=False):
         for dir in glob.glob(path + "*/"):
 
             # unzip all files in subdirectories
-            unzip(dir)
+            unzip(dir, rm_zips)
 
             # get name of directory
             # replace backslash with forward slash so all paths are the same for windows, osx, linux
@@ -29,11 +30,11 @@ def rename(path, rm=False):
                 print("moving", path + dir_name + "_" + file_name)
                 shutil.move(file, path + dir_name + "_" + file_name)
 
-        if rm:
+        if rm_dirs:
             remove_empty_folders(path)
 
     else:
-        print(path, "is not a directory")
+        raise ValueError("The path specified was empty or not a directory")
 
 
 def remove_empty_folders(path):
@@ -82,5 +83,6 @@ def unzip(path, rm=False):
     #                 shutil.move(sub_file, path + "/" + file_name)
     #             os.rmdir(file)
 
-
-rename("C:/Users/conor/Documents/GitHub/CompCorrector/outer/test/", rm=True)
+#
+# if __name__ == "__main__":
+#     rename("C:/Users/conor/Documents/GitHub/CompCorrector/outer/test/", rm_dirs=True)

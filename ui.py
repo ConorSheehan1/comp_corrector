@@ -25,18 +25,23 @@ class App(object):
         self.buttontext.set("Open")
         Button(self.root, textvariable=self.buttontext, command=self.open_file).pack()
 
+        # check-boxes
         self.rm_zips = IntVar()
         self.rm_zips.set(False)
-        self.button_rm_zips = Checkbutton(self.root, variable=self.rm_zips, onvalue=True, offvalue=False,
-                                          text="Remove zips after extraction")
-        self.button_rm_zips.pack(side=LEFT)
+        self.check_rm_zips = Checkbutton(self.root, variable=self.rm_zips, onvalue=True, offvalue=False,
+                                         text="Remove zips after extraction")
+        self.check_rm_zips.pack()
 
         self.rm_dirs = IntVar()
         self.rm_dirs.set(False)
-        self.button_rm_dirs = Checkbutton(self.root, variable=self.rm_dirs, onvalue=True, offvalue=False,
-                                          text="Remove empty directories after moving files")
-        self.button_rm_dirs.pack(side=LEFT)
+        self.check_rm_dirs = Checkbutton(self.root, variable=self.rm_dirs, onvalue=True, offvalue=False,
+                                         text="Remove empty directories after moving files")
+        self.check_rm_dirs.pack()
 
+        # set open dir button
+        self.buttontext2 = StringVar()
+        self.buttontext2.set("Start")
+        Button(self.root, textvariable=self.buttontext2, command=self.do_work).pack()
 
         self.root.mainloop()
 
@@ -49,6 +54,11 @@ class App(object):
         self.entry_input_dir.insert(0, dirname)
         print(self.entry_input_dir.get())
 
+    def do_work(self):
+        try:
+            main.rename(self.entry_input_dir.get() + "/", rm_dirs=self.rm_dirs.get(), rm_zips=self.rm_zips.get())
+        except ValueError:
+            print("The path specified was empty or not a directory")
+
 # Tk().withdraw()
 App()
-# main.rename("C:/Users/conor/Documents/GitHub/CompCorrector/outer/test/", rm=True)
