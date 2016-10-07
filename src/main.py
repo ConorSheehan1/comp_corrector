@@ -13,6 +13,9 @@ def rename(path, rm=False):
         # iterate over sub directories
         for dir in glob.glob(path + "*/"):
 
+            # unzip all files in subdirectories
+            unzip(dir)
+
             # get name of directory
             # replace backslash with forward slash so all paths are the same for windows, osx, linux
             dir_name = dir.replace("\\", "/").split("/")[-2]
@@ -42,36 +45,42 @@ def remove_empty_folders(path):
             os.rmdir(dir)
 
 
-def unzip(path):
+def unzip(path, rm=False):
     '''
-    Input: path where zip file is
+    Input: path where dir with zips, rm=True to delete zips after extraction
     Output: contents of zip file in path specified
     '''
 
-    # while there are zips or folders in the path
-    contents = True
-    while contents:
-        contents = [file for file in glob.glob(path + "*") if file in glob.glob(path + "*.zip") or os.path.isdir(file)]
+    for file in glob.glob(path + "*.zip"):
+        # extract zip to path
+        zipfile.ZipFile(file).extractall(path)
 
-        # iterate over zips and directories
-        for file in contents:
-            print(file)
+        if rm:
+            # remove zip after extraction
+            os.remove(file)
 
-            # if the file is a zip, extract and then delete it
-            if file.endswith(".zip"):
-                zipfile.ZipFile(file).extractall(path)
-                os.remove(file)
+    # # while there are zips or folders in the path
+    # contents = True
+    # while contents:
+    #     contents = [file for file in glob.glob(path + "*") if file in glob.glob(path + "*.zip") or os.path.isdir(file)]
+    #
+    #     # iterate over zips and directories
+    #     for file in contents:
+    #         print(file)
+    #
+    #         # if the file is a zip, extract and then delete it
+    #         if file.endswith(".zip"):
+    #             zipfile.ZipFile(file).extractall(path)
+    #             os.remove(file)
+    #
+    #         # if the file is a directory, move files out of it, then delete it
+    #         elif os.path.isdir(file):
+    #
+    #             # add / because file is really a directory
+    #             for sub_file in glob.glob(file + "/*"):
+    #                 file_name = os.path.basename(sub_file)
+    #                 shutil.move(sub_file, path + "/" + file_name)
+    #             os.rmdir(file)
 
-            # if the file is a directory, move files out of it, then delete it
-            elif os.path.isdir(file):
 
-                # add / because file is really a directory
-                for sub_file in glob.glob(file + "/*"):
-                    file_name = os.path.basename(sub_file)
-                    shutil.move(sub_file, path + "/" + file_name)
-                os.rmdir(file)
-
-
-
-# unzip("C:/Users/conor/Documents/GitHub/CompCorrector/outer/test/")
 rename("C:/Users/conor/Documents/GitHub/CompCorrector/outer/test/", rm=True)
