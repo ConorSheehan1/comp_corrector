@@ -1,9 +1,14 @@
-from tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton, LEFT, X
-from tkinter.filedialog import askopenfilename, askdirectory
+try:
+    from tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
+    from tkinter.filedialog import askopenfilename
+# for python 2 (untested)
+except ImportError:
+    from Tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
+    from Tkinter.filedialog import askopenfilename
+
 from src import main
 import os
 import glob
-import webbrowser
 
 
 class App(object):
