@@ -8,3 +8,7 @@
  		* Files in **C:/test/name** will change to **C:/test_name**
  		* e.g **C:/test/name/p1p1.py** will change **to C:/test/name_p1p1.py**
  	* Option to remove empty folders after move
+ 	
+#### To run either:
+* Run ui.py
+* Run src/main.py to bypass ui

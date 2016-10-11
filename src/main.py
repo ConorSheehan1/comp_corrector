@@ -60,29 +60,21 @@ def unzip(path, rm=False):
             # remove zip after extraction
             os.remove(file)
 
-    # # while there are zips or folders in the path
-    # contents = True
-    # while contents:
-    #     contents = [file for file in glob.glob(path + "*") if file in glob.glob(path + "*.zip") or os.path.isdir(file)]
-    #
-    #     # iterate over zips and directories
-    #     for file in contents:
-    #         print(file)
-    #
-    #         # if the file is a zip, extract and then delete it
-    #         if file.endswith(".zip"):
-    #             zipfile.ZipFile(file).extractall(path)
-    #             os.remove(file)
-    #
-    #         # if the file is a directory, move files out of it, then delete it
-    #         elif os.path.isdir(file):
-    #
-    #             # add / because file is really a directory
-    #             for sub_file in glob.glob(file + "/*"):
-    #                 file_name = os.path.basename(sub_file)
-    #                 shutil.move(sub_file, path + "/" + file_name)
-    #             os.rmdir(file)
 
-#
-# if __name__ == "__main__":
-#     rename("C:/Users/conor/Documents/GitHub/CompCorrector/outer/test/", rm_dirs=True)
+if __name__ == "__main__":
+    bools = {"True":True, "False":False}
+    rm_dirs = input("Remove empty directories after moving files? True/False")
+    while rm_dirs not in bools:
+        rm_dirs = input("Please choose 'True' or 'False'. Remove empty directories after moving files?")
+
+    rm_zips = input("Remove zips after extraction? True/False")
+    while rm_zips not in bools:
+        rm_dirs = input("Please choose 'True' or 'False'. zips after extraction?")
+
+    user_dir = input("Choose a directory")
+    while not os.path.isdir(user_dir):
+        user_dir = input("Chosen path must be a directory, try again")
+
+    print(user_dir, rm_dirs, rm_zips)
+
+    # rename("C:/Users/conor/Documents/GitHub/CompCorrector/outer/test/", bools[rm_dirs], bools[rm_zips])
