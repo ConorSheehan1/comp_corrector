@@ -102,6 +102,9 @@ class App(object):
 
         try:
             names = self.entry_names.get().split("\n")
+            # remove ' in all strings
+            names = list(map(lambda n: n.replace("'", ""), names))
+            print("here", names)
         except:
             # append error to label
             self.error_label.configure(text=self.error_label.cget("text") + "You must enter names to begin\n")
@@ -113,10 +116,18 @@ class App(object):
                 # at this point names are list of strings and directory is correct
                 main.unzip_outer(self.entry_zip_dir.get(), names)
 
+                cwd = os.path.dirname(self.entry_zip_dir.get()) + "/"
+
                 # get directory of zipfile, unzip and move files in subdirectories
-                main.rename(os.path.dirname(self.entry_zip_dir.get()) + "/", rm_dirs=self.rm_dirs.get(),
+                main.rename(cwd, rm_dirs=self.rm_dirs.get(),
                             rm_zips=self.rm_zips.get())
 
+                missing_names = main.missing_names(cwd, names)
+                if missing_names:
+                    print("!!!!!", missing_names, len(missing_names))
+                    self.warning_label.configure(text=self.warning_label.cget("text")
+                                                      + "The following students seem to be missing files\n"
+                                                      + str(missing_names))
                 self.completion_label.configure(text="Finished!")
                 print("Finished!")
         except:

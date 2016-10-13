@@ -82,6 +82,33 @@ def unzip_outer(zip_path, names):
             archive.extract(file, os.path.dirname(zip_path))
 
 
+def missing_names(path, names):
+    '''
+    :param path:  path to files
+    :param names: list of names
+    :return:      string of list of any names without a corresponding file in the path
+    '''
+    print("path", path)
+    print("files in path", [os.path.basename(file) for file in glob.glob(path + "*")])
+    # for name in names:
+    #     if any(os.path.basename(file).startswith(name) for file in glob.glob(path + "*")):
+    #         names.remove(name)
+
+    for file in glob.glob(path + "*"):
+        for name in names:
+            if os.path.basename(file).startswith(name):
+                try:
+                    names.remove(name)
+                except:
+                    continue
+
+    for file in glob.glob(path + "*"):
+        for name in names:
+            if os.path.basename(file).startswith(name):
+                print("whyy??", file)
+
+    return names
+
 if __name__ == "__main__":
     bools = {"True": True, "False": False}
 
