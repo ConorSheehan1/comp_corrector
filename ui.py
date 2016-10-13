@@ -104,7 +104,6 @@ class App(object):
             names = self.entry_names.get().split("\n")
             # remove ' in all strings
             names = list(map(lambda n: n.replace("'", ""), names))
-            print("here", names)
         except:
             # append error to label
             self.error_label.configure(text=self.error_label.cget("text") + "You must enter names to begin\n")
@@ -132,6 +131,4 @@ class App(object):
                 print("Finished!")
         except:
             self.error_label.configure(text=self.error_label.cget("text") + "Problem moving files\n")
-
-# Tk().withdraw()
 App()

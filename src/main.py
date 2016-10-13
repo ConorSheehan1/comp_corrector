@@ -88,46 +88,14 @@ def missing_names(path, names):
     :param names: list of names
     :return:      string of list of any names without a corresponding file in the path
     '''
-    print("path", path)
-    print("files in path", [os.path.basename(file) for file in glob.glob(path + "*")])
-    # for name in names:
-    #     if any(os.path.basename(file).startswith(name) for file in glob.glob(path + "*")):
-    #         names.remove(name)
 
     for file in glob.glob(path + "*"):
         for name in names:
             if os.path.basename(file).startswith(name):
                 try:
                     names.remove(name)
+                # if name has already been removed from list, continue with loop
                 except:
                     continue
 
-    for file in glob.glob(path + "*"):
-        for name in names:
-            if os.path.basename(file).startswith(name):
-                print("whyy??", file)
-
     return names
-
-if __name__ == "__main__":
-    bools = {"True": True, "False": False}
-
-    unzip_outer("C:/Users/conor/Documents/work/test/test/COMP 10280-Practical 2, Thursday, 22 September 2016--35506.zip", input())
-
-    # rm_dirs = input("Remove empty directories after moving files? True/False")
-    # while rm_dirs not in bools:
-    #     rm_dirs = input("Please choose 'True' or 'False'. Remove empty directories after moving files?")
-    #
-    # rm_zips = input("Remove zips after extraction? True/False")
-    # while rm_zips not in bools:
-    #     rm_dirs = input("Please choose 'True' or 'False'. zips after extraction?")
-    #
-    # user_dir = input("Choose a directory")
-    # while not os.path.isdir(user_dir):
-    #     user_dir = input("Chosen path must be a directory, try again")
-    #
-    #
-    # # if rm_dirs are not empty they evaluate to true
-    # print(user_dir, bools[rm_dirs], bools[rm_zips])
-
-    # rename("C:/Users/conor/Documents/GitHub/CompCorrector/outer/test/", bools[rm_dirs], bools[rm_zips])
