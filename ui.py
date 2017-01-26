@@ -16,7 +16,7 @@ class App(object):
         self.root = Tk()
 
         # set default dimensions, color and title
-        self.root.geometry("600x500")
+        self.root.geometry("600x400")
         self.root.configure(bg="#769ea6")
         self.root.wm_title("CompCorrector")
 
@@ -40,15 +40,6 @@ class App(object):
         self.names = StringVar()
         self.entry_names = Entry(self.root, textvariable=self.names, width="400")
         self.entry_names.pack(pady=5)
-
-        self.label = Label(self.root, text="compiler")
-        self.label.pack(pady=5)
-
-        # text entry for compiler
-        self.compiler_name = StringVar()
-        self.compiler_name.set("gcc")
-        self.compiler_name = Entry(self.root, textvariable=self.compiler_name, width="400", justify="center")
-        self.compiler_name.pack(pady=5)
 
         # check-boxes
         self.rm_zips = IntVar()
