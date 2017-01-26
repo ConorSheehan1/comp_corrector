@@ -16,11 +16,11 @@ class App(object):
         self.root = Tk()
 
         # set default dimensions, color and title
-        self.root.geometry("900x400")
+        self.root.geometry("600x500")
         self.root.configure(bg="#769ea6")
         self.root.wm_title("CompCorrector")
 
-        self.label = Label(self.root, text="Choose path to zipfile")
+        self.label = Label(self.root, text="path to zipfile")
         self.label.pack(pady=5)
 
         # text entry for zip path
@@ -30,10 +30,10 @@ class App(object):
 
         # open zip button
         self.buttontext = StringVar()
-        self.buttontext.set("Open zip file")
+        self.buttontext.set("CHOOSE ZIP")
         Button(self.root, textvariable=self.buttontext, command=self.open_file, bg="#ffff66").pack(pady=5)
 
-        self.label = Label(self.root, text="Paste list of names")
+        self.label = Label(self.root, text="list of names")
         self.label.pack(pady=5)
 
         # text entry for names
@@ -41,36 +41,44 @@ class App(object):
         self.entry_names = Entry(self.root, textvariable=self.names, width="400")
         self.entry_names.pack(pady=5)
 
+        self.label = Label(self.root, text="compiler")
+        self.label.pack(pady=5)
+
+        # text entry for compiler
+        self.compiler_name = StringVar()
+        self.compiler_name.set("gcc")
+        self.compiler_name = Entry(self.root, textvariable=self.compiler_name, width="400", justify="center")
+        self.compiler_name.pack(pady=5)
+
         # check-boxes
         self.rm_zips = IntVar()
         self.rm_zips.set(False)
         self.check_rm_zips = Checkbutton(self.root, variable=self.rm_zips, onvalue=True, offvalue=False,
-                                         text="Remove zips after extraction")
+                                         text="remove zips after extraction")
 
         self.rm_dirs = IntVar()
         self.rm_dirs.set(False)
         self.check_rm_dirs = Checkbutton(self.root, variable=self.rm_dirs, onvalue=True, offvalue=False,
-                                         text="Remove empty directories")
-		
+                                         text="remove empty directories")
+
         self.compile = IntVar()
         self.compile.set(False)
         self.check_compile = Checkbutton(self.root, variable=self.compile, onvalue=True, offvalue=False,
-                                         text="Compile files")
-		
-		
-		# have checkbox checked by default
+                                         text="compile files")
+
+        # have checkbox checked by default
         self.check_rm_zips.select()
         self.check_rm_dirs.select()
         self.check_compile.select()
-		
-		# place checkboxes on gui
+
+        # place checkboxes on gui
         self.check_rm_zips.pack()
         self.check_rm_dirs.pack()
         self.check_compile.pack()
 
         # set open dir button
         self.buttontext2 = StringVar()
-        self.buttontext2.set("Start")
+        self.buttontext2.set("START")
         Button(self.root, textvariable=self.buttontext2, command=self.do_work, bg="#93b185").pack(pady=5)
 
         # label for errors
@@ -137,13 +145,20 @@ class App(object):
                     self.warning_label.configure(text=self.warning_label.cget("text")
                                                       + "The following students seem to be missing files\n"
                                                       + str(missing_names))
-													  
+
                 if self.compile:
-                    if not main.compile(cwd, "gcc"):
-                        self.error_label.configure(text=self.error_label.cget("text") + "Error compiling files")
-				
+                    compiled = main.compile(cwd, "gcc")
+                    if compiled > 0:
+                        self.error_label.configure(text=self.error_label.cget("text") +
+                                                        "Error compiling {} file(s)\n".format(compiled))
+                    if compiled == -1:
+                        self.error_label.configure(text=self.error_label.cget("text") +
+                                                        "Exception compiling files\n".format(compiled))
+
                 self.completion_label.configure(text="Finished!")
                 print("Finished!")
         except:
             self.error_label.configure(text=self.error_label.cget("text") + "Problem moving files\n")
+
+
 App()

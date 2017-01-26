@@ -103,12 +103,10 @@ def missing_names(path, names):
 
 def compile(path, compiler):
     try:
-        print("compile in", path)
+        errors = 0
         # iterate over sub directories of path
         for dir in glob.glob(path + "*/"):
-            print("compile subdir:", dir)
-
-            # change to directory so gcc can compile files from that directory
+            # change directory so gcc can compile files from that directory
             os.chdir(dir)
 
             # iterate of files in each directory
@@ -117,13 +115,16 @@ def compile(path, compiler):
 
                 if file.lower().endswith(".c"):
                     file_name = os.path.basename(file)
-                    print("compiling", file)
+                    print("compiling", file_name, "at", os.getcwd())
                     command = compiler + " -o " + file_name.split(".")[0] + " " + file_name
                     print(command)
-                    os.system(command)
-        return True
+
+                    # if there's an error running the command, return false
+                    if os.system(command) == 1:
+                        errors += 1
+        return errors
     except:
-        return False
+        return -1
 
 if __name__ == "__main__":
     compile("C:/Users/conor/Documents/work/ucd_work/test/", "gcc")
