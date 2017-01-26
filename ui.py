@@ -33,7 +33,7 @@ class App(object):
         self.buttontext.set("Open zip file")
         Button(self.root, textvariable=self.buttontext, command=self.open_file, bg="#ffff66").pack(pady=5)
 
-        self.label = Label(self.root, text="Copy list of names from excel sheet here")
+        self.label = Label(self.root, text="Paste list of names")
         self.label.pack(pady=5)
 
         # text entry for names
@@ -46,17 +46,27 @@ class App(object):
         self.rm_zips.set(False)
         self.check_rm_zips = Checkbutton(self.root, variable=self.rm_zips, onvalue=True, offvalue=False,
                                          text="Remove zips after extraction")
-        # have checkbox checked by default
-        self.check_rm_zips.select()
-        self.check_rm_zips.pack()
 
         self.rm_dirs = IntVar()
         self.rm_dirs.set(False)
         self.check_rm_dirs = Checkbutton(self.root, variable=self.rm_dirs, onvalue=True, offvalue=False,
                                          text="Remove empty directories")
-        # have checkbox checked by default
+		
+        self.compile = IntVar()
+        self.compile.set(False)
+        self.check_compile = Checkbutton(self.root, variable=self.compile, onvalue=True, offvalue=False,
+                                         text="Compile files")
+		
+		
+		# have checkbox checked by default
+        self.check_rm_zips.select()
         self.check_rm_dirs.select()
+        self.check_compile.select()
+		
+		# place checkboxes on gui
+        self.check_rm_zips.pack()
         self.check_rm_dirs.pack()
+        self.check_compile.pack()
 
         # set open dir button
         self.buttontext2 = StringVar()
@@ -106,7 +116,7 @@ class App(object):
             names = list(map(lambda n: n.replace("'", ""), names))
         except:
             # append error to label
-            self.error_label.configure(text=self.error_label.cget("text") + "You must enter names to begin\n")
+            self.error_label.configure(text=self.error_label.cget("text") + "Error parsing names\n")
         try:
             if self.entry_zip_dir.get() == "":
                 # append to label
@@ -127,6 +137,11 @@ class App(object):
                     self.warning_label.configure(text=self.warning_label.cget("text")
                                                       + "The following students seem to be missing files\n"
                                                       + str(missing_names))
+													  
+                if self.compile:
+                    if not main.compile(cwd, "gcc"):
+                        self.error_label.configure(text=self.error_label.cget("text") + "Error compiling files")
+				
                 self.completion_label.configure(text="Finished!")
                 print("Finished!")
         except:

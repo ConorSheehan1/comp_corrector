@@ -44,7 +44,7 @@ def rename(path, rm_dirs=False, rm_zips=False):
 def remove_empty_folders(path):
     # iterate over sub directories
     for dir in glob.glob(path + "*"):
-        # double check path is subdirectory and empty
+        # double check path is a directory and is empty
         if os.path.isdir(dir) and not os.listdir(dir):
             print("removing empty directory", dir)
             os.rmdir(dir)
@@ -76,7 +76,7 @@ def unzip_outer(zip_path, names):
     archive = zipfile.ZipFile(zip_path)
 
     for file in archive.namelist():
-        if any(file.startswith(name)for name in names):
+        if any(file.startswith(name) for name in names):
             print("extracting file", file)
             # extract file to folder the zipfile is currently in
             archive.extract(file, os.path.dirname(zip_path))
@@ -99,3 +99,31 @@ def missing_names(path, names):
                     continue
 
     return names
+
+
+def compile(path, compiler):
+    try:
+        print("compile in", path)
+        # iterate over sub directories of path
+        for dir in glob.glob(path + "*/"):
+            print("compile subdir:", dir)
+
+            # change to directory so gcc can compile files from that directory
+            os.chdir(dir)
+
+            # iterate of files in each directory
+            for file in glob.glob(dir + "*"):
+                # option to choose file ending?
+
+                if file.lower().endswith(".c"):
+                    file_name = os.path.basename(file)
+                    print("compiling", file)
+                    command = compiler + " -o " + file_name.split(".")[0] + " " + file_name
+                    print(command)
+                    os.system(command)
+        return True
+    except:
+        return False
+
+if __name__ == "__main__":
+    compile("C:/Users/conor/Documents/work/ucd_work/test/", "gcc")
