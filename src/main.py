@@ -73,6 +73,7 @@ def compile_c(path, compiler="gcc"):
 
             # will return 0 if successfully compiled, 1 if not
             return os.system(command)
+        return 0
 
     try:
         errors = 0
@@ -84,14 +85,14 @@ def compile_c(path, compiler="gcc"):
             os.chdir(dir)
 
             # iterate of files in each directory
-            for file in glob.glob(dir + "*"):
+            for file in glob.glob(dir + "/*"):
 
-                # if folder contains subfolder, and isn't ignore __MACOSX folders
-                if not file.startswith("_") and os.path.isdir(file):
+                # if folder contains subfolder, and it isn't __MACOSX
+                if not os.path.basename(file).startswith("_") and os.path.isdir(file):
                     # change directory so gcc can compile files from that directory
                     os.chdir(file)
 
-                    for subfile in glob.glob(file + "*"):
+                    for subfile in glob.glob(file + "/*"):
                         # compile files in subfolder
                         errors += helper(subfile)
 

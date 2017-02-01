@@ -98,7 +98,7 @@ class App(object):
             # throw error
             self.error_label.configure(text="File must end with '.zip'")
 
-        if len(glob.glob(os.path.dirname(self.entry_zip_dir.get()) + "/*")) > 1:
+        if not self.safe_mode and len(glob.glob(os.path.dirname(self.entry_zip_dir.get()) + "/*")) > 1:
             self.warning_label.configure(text="Be careful, there's multiple items in the current directory")
 
     def do_work(self):
