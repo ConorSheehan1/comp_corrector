@@ -114,6 +114,7 @@ class App(object):
         except:
             # append error to label
             self.error_label.configure(text=self.error_label.cget("text") + "Error parsing names\n")
+            print("Error parsing names")
         try:
             if self.entry_zip_dir.get() == "":
                 # append to label
@@ -125,23 +126,19 @@ class App(object):
 
                 if self.safe_mode.get():
                     safe_dir = "safe/"
-
                     # create safe dir if it doesn't exist
                     if not os.path.exists(cwd + safe_dir):
                         os.mkdir(cwd + safe_dir)
 
-                    # append safe dir to cwd
+                    # add safe dir to cwd and zip_path
                     cwd += safe_dir
-
-                    # append safe dir zip path
                     zip_path = cwd + os.path.basename(self.entry_zip_dir.get())
-
                     print("safe mode enabled", cwd, zip_path)
 
-                    # copy zip to path
+                    # copy zip into safe directory
                     shutil.copy2(self.entry_zip_dir.get(), zip_path)
 
-                # if safe mode is enabled, move zip to safe folder, then run, otherwise run in directory zip is already in
+                # if safe mode is enabled, move zip to safe folder, then run, otherwise run in directory zip already is
                 main.unzip_outer(zip_path, names)
 
                 # get directory of zipfile, unzip and move files in subdirectories

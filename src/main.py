@@ -13,7 +13,7 @@ def rename(path, rm_dirs=True, rm_zips=True):
     :return:        files renamed dirname_filename in path specified
     '''
 
-    print(path)
+    print("renaming files in path:", path)
 
     # replace backslash with forward slash so all paths are the same for windows, osx, linux
     # path = path.replace("\\", "/")
@@ -70,7 +70,7 @@ def unzip_outer(zip_path, names):
     '''
     :param zip_path: path to zip file
     :param names:   list of strings
-    :return:        extract any files in zipfile that start with name in names
+    :return:        extract any files in zipfile that start with name specified
     '''
 
     archive = zipfile.ZipFile(zip_path)
@@ -106,13 +106,14 @@ def compile_c(path, compiler):
         errors = 0
         # iterate over sub directories of path
         for dir in glob.glob(path + "*/"):
+
             # change directory so gcc can compile files from that directory
             os.chdir(dir)
 
             # iterate of files in each directory
             for file in glob.glob(dir + "*"):
-                # option to choose file ending?
 
+                # option to choose file ending?
                 if file.lower().endswith(".c"):
                     file_name = os.path.basename(file)
                     print("compiling", file_name, "at", os.getcwd())
