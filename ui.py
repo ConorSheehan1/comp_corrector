@@ -151,7 +151,7 @@ class App(object):
                                                       + "The following students seem to be missing files\n"
                                                       + str(missing_names))
 
-                if self.compile:
+                if self.compile.get():
                     compiled = main.compile_c(cwd, "gcc")
                     if compiled > 0:
                         self.error_label.configure(text=self.error_label.cget("text") +
