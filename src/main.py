@@ -4,7 +4,7 @@ import shutil
 import zipfile
 
 
-def rename(path, rm_dirs=False, rm_zips=False):
+def rename(path, rm_dirs=True, rm_zips=True):
     '''
 
     :param path:    path to directory containing folders which contain either files or zips
@@ -101,7 +101,7 @@ def missing_names(path, names):
     return names
 
 
-def compile(path, compiler):
+def compile_c(path, compiler):
     try:
         errors = 0
         # iterate over sub directories of path
@@ -127,4 +127,4 @@ def compile(path, compiler):
         return -1
 
 if __name__ == "__main__":
-    compile("C:/Users/conor/Documents/work/ucd_work/test/", "gcc")
+    compile_c("C:/Users/conor/Documents/work/ucd_work/test/", "gcc")

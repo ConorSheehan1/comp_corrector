@@ -1,14 +1,9 @@
-try:
-    from tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
-    from tkinter.filedialog import askopenfilename
-# for python 2 (untested)
-except ImportError:
-    from Tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
-    from Tkinter.filedialog import askopenfilename
-
-from src import main
+from tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
+from tkinter.filedialog import askopenfilename
 import os
 import glob
+import shutil
+from src import main
 
 
 class App(object):
@@ -22,6 +17,9 @@ class App(object):
 
         self.label = Label(self.root, text="path to zipfile")
         self.label.pack(pady=5)
+
+        # set remove dirs to true by default, why keep empty folders?
+        self.rm_dirs = True
 
         # text entry for zip path
         self.zip_dir = StringVar()
@@ -47,25 +45,25 @@ class App(object):
         self.check_rm_zips = Checkbutton(self.root, variable=self.rm_zips, onvalue=True, offvalue=False,
                                          text="remove zips after extraction")
 
-        self.rm_dirs = IntVar()
-        self.rm_dirs.set(False)
-        self.check_rm_dirs = Checkbutton(self.root, variable=self.rm_dirs, onvalue=True, offvalue=False,
-                                         text="remove empty directories")
-
         self.compile = IntVar()
         self.compile.set(False)
         self.check_compile = Checkbutton(self.root, variable=self.compile, onvalue=True, offvalue=False,
                                          text="compile files")
 
+        self.safe_mode = IntVar()
+        self.safe_mode.set(False)
+        self.check_safe_mode = Checkbutton(self.root, variable=self.safe_mode, onvalue=True, offvalue=False,
+                                         text="safe mode")
+
         # have checkbox checked by default
         self.check_rm_zips.select()
-        self.check_rm_dirs.select()
         self.check_compile.select()
+        self.check_safe_mode.select()
 
         # place checkboxes on gui
         self.check_rm_zips.pack()
-        self.check_rm_dirs.pack()
         self.check_compile.pack()
+        self.check_safe_mode.pack()
 
         # set open dir button
         self.buttontext2 = StringVar()
@@ -122,12 +120,32 @@ class App(object):
                 self.error_label.configure(text=self.error_label.cget("text") + "You must select a zip file to begin\n")
             else:
                 # at this point names are list of strings and directory is correct
-                main.unzip_outer(self.entry_zip_dir.get(), names)
-
                 cwd = os.path.dirname(self.entry_zip_dir.get()) + "/"
+                zip_path = self.entry_zip_dir.get()
+
+                if self.safe_mode.get():
+                    safe_dir = "safe/"
+
+                    # create safe dir if it doesn't exist
+                    if not os.path.exists(cwd + safe_dir):
+                        os.mkdir(cwd + safe_dir)
+
+                    # append safe dir to cwd
+                    cwd += safe_dir
+
+                    # append safe dir zip path
+                    zip_path = cwd + os.path.basename(self.entry_zip_dir.get())
+
+                    print("safe mode enabled", cwd, zip_path)
+
+                    # copy zip to path
+                    shutil.copy2(self.entry_zip_dir.get(), zip_path)
+
+                # if safe mode is enabled, move zip to safe folder, then run, otherwise run in directory zip is already in
+                main.unzip_outer(zip_path, names)
 
                 # get directory of zipfile, unzip and move files in subdirectories
-                main.rename(cwd, rm_dirs=self.rm_dirs.get(),
+                main.rename(cwd, rm_dirs=self.rm_dirs,
                             rm_zips=self.rm_zips.get())
 
                 missing_names = main.missing_names(cwd, names)
@@ -138,7 +156,7 @@ class App(object):
                                                       + str(missing_names))
 
                 if self.compile:
-                    compiled = main.compile(cwd, "gcc")
+                    compiled = main.compile_c(cwd, "gcc")
                     if compiled > 0:
                         self.error_label.configure(text=self.error_label.cget("text") +
                                                         "Error compiling {} file(s)\n".format(compiled))
@@ -150,6 +168,5 @@ class App(object):
                 print("Finished!")
         except:
             self.error_label.configure(text=self.error_label.cget("text") + "Problem moving files\n")
-
 
 App()
