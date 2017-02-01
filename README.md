@@ -1,22 +1,18 @@
-# CompCorrector
-#### Usage:
-1. Choose the download all option for a practical on moodle (returns single zip)
-2. Copy the path to the zip or use the open button to select the zipfile
-3. Copy names you are assigned from google sheets file
-4. Hit start
+## Requirements
+python3
 
+## How to
+Run ui.py. You should see the interface below:
+![UI image](images/UI.PNG)
 
-##
-* Input: A path to a zip file and a list of string seperated by "\n" 
-* Output: 
-    * All folders in zip starting with names specified are extracted
-	* Files in the resulting folders are renamed with the prefix of the name of the folder.
- 		* For example: Path = **C:/test**, Subdir = **C:/test/name**
- 		* Files in **C:/test/name** will change to **C:/test_name**
- 		* e.g **C:/test/name/p1p1.py** will change **to C:/test/name_p1p1.py**
- 	* Option to remove empty folders after move
- 	* The main zip will not be removed, in case you want to check all relevant files have been extracted
- 	
-#### To run either:
-* Run ui.py
-* Run src/main.py and edit (not recommended)
+1. Click <kbd>choose zip</kbd> to use the default OS file chooser, or enter the path to your zip directly
+2. Paste the names of the students you need to correct into the **list of names** field  
+ **(If no names are included, all files in the zip will be extracted)**
+3. Choose your preferences
+4. Click <kbd>start</kbd>
+
+## Preferences
+1. **remove zips** removes zip files submitted by students will be deleted once all files within them have been extracted. The main zip (chosen using the <kbd>choose zip</kbd> button) will never be removed.
+2. **compile files** uses gcc to compile files and give them the same name as their source file. This feature only works with C files currently.
+3. **safe mode** creates a new folder called safe and copies the main zip to it before running anything.
+ 
