@@ -43,7 +43,7 @@ class App(object):
         self.rm_zips = IntVar()
         self.rm_zips.set(False)
         self.check_rm_zips = Checkbutton(self.root, variable=self.rm_zips, onvalue=True, offvalue=False,
-                                         text="remove zips after extraction")
+                                         text="remove zips")
 
         self.compile = IntVar()
         self.compile.set(False)
@@ -133,7 +133,7 @@ class App(object):
                     # add safe dir to cwd and zip_path
                     cwd += safe_dir
                     zip_path = cwd + os.path.basename(self.entry_zip_dir.get())
-                    print("safe mode enabled", cwd, zip_path)
+                    print("safe mode enabled", zip_path)
 
                     # copy zip into safe directory
                     shutil.copy2(self.entry_zip_dir.get(), zip_path)
@@ -142,8 +142,7 @@ class App(object):
                 main.unzip_outer(zip_path, names)
 
                 # get directory of zipfile, unzip and move files in subdirectories
-                main.rename(cwd, rm_dirs=self.rm_dirs,
-                            rm_zips=self.rm_zips.get())
+                main.unzip(cwd, rm_zips=self.rm_zips.get())
 
                 missing_names = main.missing_names(cwd, names)
                 if missing_names:

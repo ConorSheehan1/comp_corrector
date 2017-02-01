@@ -4,41 +4,18 @@ import shutil
 import zipfile
 
 
-def rename(path, rm_dirs=True, rm_zips=True):
-    '''
-
-    :param path:    path to directory containing folders which contain either files or zips
-    :param rm_dirs: boolean to remove empty directories
-    :param rm_zips: boolean to remove zips after extraction
-    :return:        files renamed dirname_filename in path specified
-    '''
-
-    print("renaming files in path:", path)
-
-    # replace backslash with forward slash so all paths are the same for windows, osx, linux
-    # path = path.replace("\\", "/")
-
-    # iterate over sub directories
+def unzip(path, rm_zips=True):
+    # iterate over sub directories of path
     for dir in glob.glob(path + "*/"):
 
         # unzip all files in subdirectories
-        unzip(dir, rm_zips)
+        for file in glob.glob(dir + "*.zip"):
+            # extract zip to path
+            zipfile.ZipFile(file).extractall(dir)
 
-        # get name of directory
-        # replace backslash with forward slash so all paths are the same for windows, osx, linux
-        dir_name = dir.replace("\\", "/").split("/")[-2]
-
-        # iterate over every file in sub directory
-        for file in glob.glob(dir + "*"):
-            # get name of file
-            file_name = os.path.basename(file)
-
-            # move file to outer path and rename file with prefix (dir_name_file_name)
-            print("moving", path + dir_name + "_" + file_name)
-            shutil.move(file, path + dir_name + "_" + file_name)
-
-    if rm_dirs:
-        remove_empty_folders(path)
+            # remove zip after extraction
+            if rm_zips:
+                os.remove(file)
 
 
 def remove_empty_folders(path):
@@ -48,22 +25,6 @@ def remove_empty_folders(path):
         if os.path.isdir(dir) and not os.listdir(dir):
             print("removing empty directory", dir)
             os.rmdir(dir)
-
-
-def unzip(path, rm=False):
-    '''
-    :param path: path to zipfile
-    :param rm:   boolean to remove zip after extraction
-    :return:    unzipped files
-    '''
-
-    for file in glob.glob(path + "*.zip"):
-        # extract zip to path
-        zipfile.ZipFile(file).extractall(path)
-
-        if rm:
-            # remove zip after extraction
-            os.remove(file)
 
 
 def unzip_outer(zip_path, names):
@@ -101,9 +62,21 @@ def missing_names(path, names):
     return names
 
 
-def compile_c(path, compiler):
+def compile_c(path, compiler="gcc"):
+
+    # function that actually runs commands
+    def helper(helper_file):
+        if helper_file.lower().endswith(".c"):
+            helper_file_name = os.path.basename(helper_file)
+            command = compiler + " -o " + helper_file_name.split(".")[0] + " " + helper_file_name
+            print(command, "running in dir", os.getcwd())
+
+            # will return 0 if successfully compiled, 1 if not
+            return os.system(command)
+
     try:
         errors = 0
+
         # iterate over sub directories of path
         for dir in glob.glob(path + "*/"):
 
@@ -113,16 +86,21 @@ def compile_c(path, compiler):
             # iterate of files in each directory
             for file in glob.glob(dir + "*"):
 
-                # option to choose file ending?
-                if file.lower().endswith(".c"):
-                    file_name = os.path.basename(file)
-                    print("compiling", file_name, "at", os.getcwd())
-                    command = compiler + " -o " + file_name.split(".")[0] + " " + file_name
-                    print(command)
+                # if folder contains subfolder, and isn't ignore __MACOSX folders
+                if not file.startswith("_") and os.path.isdir(file):
+                    # change directory so gcc can compile files from that directory
+                    os.chdir(file)
 
-                    # if there's an error running the command, return false
-                    if os.system(command) == 1:
-                        errors += 1
+                    for subfile in glob.glob(file + "*"):
+                        # compile files in subfolder
+                        errors += helper(subfile)
+
+                    # move out of subdirectory
+                    os.system("cd ..")
+
+                # compile files in main folder
+                errors += helper(file)
+
         return errors
     except:
         return -1
