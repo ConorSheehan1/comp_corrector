@@ -11,8 +11,11 @@ class App(object):
         self.root = Tk()
 
         # set default dimensions, color and title
+        self.grey = "#909296"
+        self.yellow = "#f7f574"
+        self.green = "#93b185"
+
         self.root.geometry("600x400")
-        self.root.configure(bg="#769ea6")
         self.root.wm_title("CompCorrector")
 
         self.label = Label(self.root, text="path to zipfile")
@@ -23,20 +26,20 @@ class App(object):
 
         # text entry for zip path
         self.zip_dir = StringVar()
-        self.entry_zip_dir = Entry(self.root, textvariable=self.zip_dir, width="400")
+        self.entry_zip_dir = Entry(self.root, textvariable=self.zip_dir, width="400", bg=self.grey)
         self.entry_zip_dir.pack(pady=5)
 
         # open zip button
         self.buttontext = StringVar()
         self.buttontext.set("CHOOSE ZIP")
-        Button(self.root, textvariable=self.buttontext, command=self.open_file, bg="#ffff66").pack(pady=5)
+        Button(self.root, textvariable=self.buttontext, command=self.open_file, bg=self.yellow).pack(pady=5)
 
         self.label = Label(self.root, text="list of names")
         self.label.pack(pady=5)
 
         # text entry for names
         self.names = StringVar()
-        self.entry_names = Entry(self.root, textvariable=self.names, width="400")
+        self.entry_names = Entry(self.root, textvariable=self.names, width="400", bg=self.grey)
         self.entry_names.pack(pady=5)
 
         # check-boxes
@@ -68,18 +71,18 @@ class App(object):
         # set open dir button
         self.buttontext2 = StringVar()
         self.buttontext2.set("START")
-        Button(self.root, textvariable=self.buttontext2, command=self.do_work, bg="#93b185").pack(pady=5)
+        Button(self.root, textvariable=self.buttontext2, command=self.do_work, bg=self.green).pack(pady=5)
 
         # label for errors
-        self.error_label = Label(self.root, text="", foreground="red", bg="grey")
+        self.error_label = Label(self.root, text="", foreground="red", bg=self.grey)
         self.error_label.pack(pady=5)
 
         # label for warnings
-        self.warning_label = Label(self.root, text="", foreground="yellow", bg="grey")
+        self.warning_label = Label(self.root, text="", foreground=self.yellow, bg=self.grey)
         self.warning_label.pack(pady=5)
 
         # label for completion
-        self.completion_label = Label(self.root, text="", bg="grey")
+        self.completion_label = Label(self.root, text="", bg=self.grey)
         self.completion_label.pack(pady=5)
 
         self.root.mainloop()
@@ -113,8 +116,10 @@ class App(object):
             names = list(map(lambda n: n.replace("'", ""), names))
         except:
             # append error to label
-            self.error_label.configure(text=self.error_label.cget("text") + "Error parsing names\n")
-            print("Error parsing names")
+            self.error_label.configure(text=self.error_label.cget("text") + "Exception parsing names\n")
+            print("Exception parsing names")
+            # break out of function
+            return
         try:
             if self.entry_zip_dir.get() == "":
                 # append to label
@@ -125,7 +130,9 @@ class App(object):
                 zip_path = self.entry_zip_dir.get()
 
                 if self.safe_mode.get():
-                    safe_dir = "safe/"
+                    #safe_dir = "safe/"
+                    # make dir same name as zip (remove file extension, add slash)
+                    safe_dir = os.path.basename(self.entry_zip_dir.get()).split(".")[0]+"/"
                     # create safe dir if it doesn't exist
                     if not os.path.exists(cwd + safe_dir):
                         os.mkdir(cwd + safe_dir)
@@ -148,7 +155,7 @@ class App(object):
                 if missing_names:
                     print("!!!!!", missing_names, len(missing_names))
                     self.warning_label.configure(text=self.warning_label.cget("text")
-                                                      + "The following students seem to be missing files\n"
+                                                      + "The following students seem to be missing files:\n"
                                                       + str(missing_names))
 
                 if self.compile.get():
@@ -163,6 +170,6 @@ class App(object):
                 self.completion_label.configure(text="Finished!")
                 print("Finished!")
         except:
-            self.error_label.configure(text=self.error_label.cget("text") + "Problem moving files\n")
+            self.error_label.configure(text=self.error_label.cget("text") + "Exception extracting files\n")
 
 App()
