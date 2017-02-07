@@ -41,5 +41,5 @@ Run ui.py. You should see the interface below:
 2. **Exception compiling files** Occurs when attempting to compile a file stops the execution of the program. Once this occurs no further files can be compiled.
 3. **Exception parsing names** Occurs if the program encounters a problem splitting the names provided using "\n" or removing single quotes in any of the names.
 4. **Exception extracting files** Occurs if there is a general exception causing the program to stop execution.
-5. **You must select a zip file to begin** Occurs the path you choose does not end in ".zip"
+5. **You must select a zip file to begin** Occurs if the path in the **path to zipfile** field does not end in ".zip"
 ![error compiling files](images/error.PNG)

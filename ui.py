@@ -1,5 +1,12 @@
-from tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
-from tkinter.filedialog import askopenfilename
+try:
+    from tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
+    from tkinter.filedialog import askopenfilename
+
+    # if python3 tkinter fails, try python 2 Tkinter
+except ImportError:
+    from Tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
+    from tkFileDialog import askopenfilename
+
 import os
 import glob
 import shutil
