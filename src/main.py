@@ -1,6 +1,8 @@
 import glob
 import os
 import zipfile
+import src.secret
+from docx import Document
 
 
 def unzip(path, rm_zips=True):
@@ -50,29 +52,32 @@ def missing_names(path, names):
     :return:      string of list of any names without a corresponding file in the path
     '''
 
-    for file in glob.glob(path + "*"):
-        for name in names:
-            if os.path.basename(file).startswith(name):
-                try:
-                    names.remove(name)
-                # if name has already been removed from list, continue with loop
-                except:
-                    continue
+    missing_list = []
+    for name in names:
+        # if no files in the directory start with the students name, add it to list of missing names
+        if not any(os.path.basename(file).startswith(name) for file in glob.glob(path + "*")):
+            missing_list.append(name)
 
-    return names
+    return missing_list
 
 
 def compile_c(path, compiler="gcc"):
+    '''
+    :param path:      path to files
+    :param compiler:  name of compiler to use
+    :return:          number of files which fail to compile (-1 if exception occurs)
+    '''
 
-    # function that actually runs commands
+    # function that runs commands on os!
     def helper(helper_file):
         if helper_file.lower().endswith(".c"):
             helper_file_name = os.path.basename(helper_file)
             command = compiler + " -o " + helper_file_name.split(".")[0] + " " + helper_file_name
-            print(command, "running in dir", os.getcwd())
+            print("running in dir", os.getcwd())
 
             # will return 0 if successfully compiled, 1 if not
             return os.system(command)
+        # if file doesn't end with .c, don't bother compiling, don't increment error count
         return 0
 
     try:
@@ -105,6 +110,30 @@ def compile_c(path, compiler="gcc"):
         return errors
     except:
         return -1
+
+
+def feedback(path, names):
+    # change to path where file should be saved
+    os.chdir(path)
+    filename = 'feedback.docx'
+    d = Document()
+
+    # create table to store feedback
+    table = d.add_table(rows=0, cols=2, style="Table Grid")
+    for name in names:
+        row = table.add_row().cells
+        row[0].text = name
+        row[1].text = "\nIf you have any questions, please email me at " + src.secret.email
+
+    d.save(filename)
+    # open file with default app
+    try:
+        os.system("start " + filename)
+    except:
+        # for osx and linux
+        os.system("open " + filename)
+    return True
+
 
 if __name__ == "__main__":
     compile_c("C:/Users/conor/Documents/work/ucd_work/test/", "gcc")

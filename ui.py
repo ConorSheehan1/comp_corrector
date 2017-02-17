@@ -65,15 +65,22 @@ class App(object):
         self.check_safe_mode = Checkbutton(self.root, variable=self.safe_mode, onvalue=True, offvalue=False,
                                          text="safe mode")
 
+        self.feedback = IntVar()
+        self.feedback.set(False)
+        self.check_feedback = Checkbutton(self.root, variable=self.feedback, onvalue=True, offvalue=False,
+                                         text="feedback.docx")
+
         # have checkbox checked by default
         self.check_rm_zips.select()
         self.check_compile.select()
         self.check_safe_mode.select()
+        self.check_feedback.select()
 
         # place checkboxes on gui
         self.check_rm_zips.pack()
         self.check_compile.pack()
         self.check_safe_mode.pack()
+        self.check_feedback.pack()
 
         # set open dir button
         self.buttontext2 = StringVar()
@@ -172,7 +179,11 @@ class App(object):
                                                         "Error compiling {} file(s)\n".format(compiled))
                     if compiled == -1:
                         self.error_label.configure(text=self.error_label.cget("text") +
-                                                        "Exception compiling files\n".format(compiled))
+                                                        "Exception compiling files\n")
+                if self.feedback.get():
+                    if not main.feedback(cwd, names):
+                        self.error_label.configure(text=self.error_label.cget("text") +
+                                                        "Exception creating feedback.docx\n")
 
                 self.completion_label.configure(text="Finished!")
                 print("Finished!")
