@@ -22,7 +22,7 @@ class App(object):
         self.yellow = "#f7f574"
         self.green = "#93b185"
 
-        self.root.geometry("600x400")
+        self.root.geometry("600x450")
         self.root.wm_title("CompCorrector")
 
         self.label = Label(self.root, text="path to zipfile")
@@ -77,9 +77,9 @@ class App(object):
         self.check_feedback.select()
 
         # place checkboxes on gui
+        self.check_safe_mode.pack()
         self.check_rm_zips.pack()
         self.check_compile.pack()
-        self.check_safe_mode.pack()
         self.check_feedback.pack()
 
         # set open dir button
@@ -144,7 +144,6 @@ class App(object):
                 zip_path = self.entry_zip_dir.get()
 
                 if self.safe_mode.get():
-                    #safe_dir = "safe/"
                     # make dir same name as zip (remove file extension, add slash)
                     safe_dir = os.path.basename(self.entry_zip_dir.get()).split(".")[0]+"/"
                     # create safe dir if it doesn't exist
@@ -181,7 +180,9 @@ class App(object):
                         self.error_label.configure(text=self.error_label.cget("text") +
                                                         "Exception compiling files\n")
                 if self.feedback.get():
-                    if not main.feedback(cwd, names):
+                    try:
+                        main.feedback(cwd, names)
+                    except:
                         self.error_label.configure(text=self.error_label.cget("text") +
                                                         "Exception creating feedback.docx\n")
 

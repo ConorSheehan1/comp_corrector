@@ -1,5 +1,5 @@
 ## Requirements
-1. python3 (to run program at all)
+1. python [tkinter, docx]
 2. gcc (in order to use the compile files option)
 
 
@@ -26,9 +26,10 @@ Run ui.py. You should see the interface below:
 ![finished](images/success.PNG) 
 
 ## Preferences
-1. **remove zips** removes zip files submitted by students (i.e zips within folders within the current working directory) once they have been extracted. The main zip (chosen using the <kbd>choose zip</kbd> button) will not be removed, regardless of the state of this setting.
-2. **compile files** uses gcc to compile files and give them the same name as their source file. This feature only works with C files and gcc currently.
-3. **safe mode** creates a new folder with the same name as the zip and copies the main zip to it before running anything. When enabled the program essentially uses "extract to folder", when disabled it uses "extract here".
+1. **safe mode** creates a new folder with the same name as the zip and copies the main zip to it before running anything. When enabled the program essentially uses "extract to folder", when disabled it uses "extract here".
+2. **remove zips** removes zip files submitted by students (i.e zips within folders within the current working directory) once they have been extracted. The main zip (chosen using the <kbd>choose zip</kbd> button) will not be removed, regardless of the state of this setting.
+3. **compile files** uses gcc to compile files and give them the same name as their source file. This feature only works with C files and gcc currently.
+4. **feedback.docx** creates a .docx file containing a table with the list of students names in one column and a message to email you with questions in the other. 
 
 ## Warnings
 1. **Be careful, there's multiple files in the current directory** occurs if safe mode is disabled and there is more one file in the path in the **path to zipfile** field. This warning is to alert the user that the program has access to all files in the directory the zip is in, and may extract or compile files the user did not want to be extracted or compiled.
@@ -41,5 +42,6 @@ Run ui.py. You should see the interface below:
 2. **Exception compiling files** Occurs when attempting to compile a file stops the execution of the program. Once this occurs no further files can be compiled.
 3. **Exception parsing names** Occurs if the program encounters a problem splitting the names provided using "\n" or removing single quotes in any of the names.
 4. **Exception extracting files** Occurs if there is a general exception causing the program to stop execution.
-5. **You must select a zip file to begin** Occurs if the path in the **path to zipfile** field does not end in ".zip"
+5. **Exception creating feedback.docx** Occurs most likely due to an import error getting docx, or permission being denied to write to feedback.docx because it is already open.
+6. **You must select a zip file to begin** Occurs if the path in the **path to zipfile** field does not end in ".zip"
 ![error compiling files](images/error.PNG)

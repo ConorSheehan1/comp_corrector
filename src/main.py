@@ -2,7 +2,6 @@ import glob
 import os
 import zipfile
 import src.secret
-from docx import Document
 
 
 def unzip(path, rm_zips=True):
@@ -49,7 +48,7 @@ def missing_names(path, names):
     '''
     :param path:  path to files
     :param names: list of names
-    :return:      string of list of any names without a corresponding file in the path
+    :return:      list of any names without a corresponding file in the path
     '''
 
     missing_list = []
@@ -113,6 +112,15 @@ def compile_c(path, compiler="gcc"):
 
 
 def feedback(path, names):
+    '''
+    :param path:    path to files
+    :param names:   list of names
+    :return:        None
+    '''
+
+    # only import docx if necessary
+    from docx import Document
+
     # change to path where file should be saved
     os.chdir(path)
     filename = 'feedback.docx'
@@ -132,7 +140,6 @@ def feedback(path, names):
     except:
         # for osx and linux
         os.system("open " + filename)
-    return True
 
 
 if __name__ == "__main__":
