@@ -166,7 +166,6 @@ class App(object):
 
                 missing_names = main.missing_names(cwd, names)
                 if missing_names:
-                    print("!!!!!", missing_names, len(missing_names))
                     self.warning_label.configure(text=self.warning_label.cget("text")
                                                       + "The following students seem to be missing files:\n"
                                                       + str(missing_names))
@@ -181,7 +180,7 @@ class App(object):
                                                         "Exception compiling files\n")
                 if self.feedback.get():
                     try:
-                        main.feedback(cwd, names)
+                        main.feedback(cwd, names, missing_names)
                     except:
                         self.error_label.configure(text=self.error_label.cget("text") +
                                                         "Exception creating feedback.docx\n")

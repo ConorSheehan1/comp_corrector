@@ -111,7 +111,7 @@ def compile_c(path, compiler="gcc"):
         return -1
 
 
-def feedback(path, names):
+def feedback(path, names, missing):
     '''
     :param path:    path to files
     :param names:   list of names
@@ -131,7 +131,11 @@ def feedback(path, names):
     for name in names:
         row = table.add_row().cells
         row[0].text = name
-        row[1].text = "\nIf you have any questions, please email me at " + src.secret.email
+
+        if name in missing:
+            row[1].text = "no file submitted"
+        else:
+            row[1].text = "\nIf you have any questions, please email me at " + src.secret.email
 
     d.save(filename)
     # open file with default app
