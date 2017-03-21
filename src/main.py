@@ -8,17 +8,22 @@ import src.secret
 
 
 def unzip(path, rm_zips=True):
+    errors = []
     # iterate over sub directories of path
     for dir in glob.glob(path + "*/"):
 
         # unzip all files in subdirectories
         for file in glob.glob(dir + "*.zip"):
             # extract zip to path
-            zipfile.ZipFile(file).extractall(dir)
+            try:
+                zipfile.ZipFile(file).extractall(dir)
+            except:
+                errors.append(os.path.basename(file))
 
             # remove zip after extraction
             if rm_zips:
                 os.remove(file)
+    return errors
 
 
 def remove_empty_folders(path):
@@ -45,6 +50,8 @@ def unzip_outer(zip_path, names):
             print("extracting file", file)
             # extract file to folder the zipfile is currently in
             archive.extract(file, os.path.dirname(zip_path))
+
+    archive.close()
 
 
 def missing_names(path, names):

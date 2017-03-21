@@ -162,7 +162,10 @@ class App(object):
                 main.unzip_outer(zip_path, names)
 
                 # get directory of zipfile, unzip and move files in subdirectories
-                main.unzip(cwd, rm_zips=self.rm_zips.get())
+                extraction_errors = main.unzip(cwd, rm_zips=self.rm_zips.get())
+                if extraction_errors:
+                    self.error_label.configure(text=self.error_label.cget("text") +
+                                                        "Exception extracting: {}\n".format(extraction_errors))
 
                 missing_names = main.missing_names(cwd, names)
                 if missing_names:
@@ -188,6 +191,8 @@ class App(object):
                 self.completion_label.configure(text="Finished!")
                 print("Finished!")
         except:
-            self.error_label.configure(text=self.error_label.cget("text") + "Exception extracting files\n")
+            # catch exception to allow prompt within ui, then re-raise exception
+            self.error_label.configure(text=self.error_label.cget("text") + "Exception extracting files. Check the console\n")
+            raise
 
 App()
