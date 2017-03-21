@@ -143,6 +143,10 @@ class App(object):
                 cwd = os.path.dirname(self.entry_zip_dir.get()) + "/"
                 zip_path = self.entry_zip_dir.get()
 
+                if self.entry_names.get().strip() == "":
+                    self.warning_label.configure(text=self.warning_label.cget("text") +
+                                "No names included. All files will be extracted and feedback.docx will be empty\n")
+
                 if self.safe_mode.get():
                     # make dir same name as zip (remove file extension, add slash)
                     safe_dir = os.path.basename(self.entry_zip_dir.get()).split(".")[0]+"/"
