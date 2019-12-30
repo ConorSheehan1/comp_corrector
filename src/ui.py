@@ -5,8 +5,8 @@ import os
 import glob
 import shutil
 
-from file_management.compile import compile_c, missing_names
-from file_management.feedback import feedback
+from file_management.compile import compile_c
+from file_management.feedback import create_docx_feedback, get_missing_names
 from file_management.zip_archives import unzip, unzip_outer
 
 
@@ -156,6 +156,7 @@ class App(object):
                 text="Be careful, there are multiple items in the current directory"
             )
 
+    # TODO: refactor and rename
     def do_work(self):
         # flush all labels
         self.warning_label.configure(text="")
@@ -225,7 +226,7 @@ class App(object):
                         )
                     )
 
-                missing_names = missing_names(cwd, names)
+                missing_names = get_missing_names(cwd, names)
                 if missing_names:
                     self.warning_label.configure(
                         text=(
@@ -247,7 +248,7 @@ class App(object):
                         )
                 if self.feedback.get():
                     try:
-                        feedback(cwd, names, missing_names)
+                        create_docx_feedback(cwd, names, missing_names)
                     except:
                         self.error_label.configure(
                             text=f"{self.error_label.cget('text')} Exception creating feedback.docx\n"

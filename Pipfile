@@ -10,6 +10,7 @@ lint = "black ."
 
 [dev-packages]
 black = "*"
+rope = "*"
 
 [packages]
 lxml = "==3.7.3"

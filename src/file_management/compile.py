@@ -3,24 +3,6 @@ import os
 import yaml
 
 
-def missing_names(path, names):
-    """
-    :param path:  path to files
-    :param names: list of names
-    :return:      list of any names without a corresponding file in the path
-    """
-
-    missing_list = []
-    for name in names:
-        # if no files in the directory start with the students name, add it to list of missing names
-        if not any(
-            os.path.basename(file).startswith(name) for file in glob.glob(path + "*")
-        ):
-            missing_list.append(name)
-
-    return missing_list
-
-
 def _compile_helper(helper_file, compiler="gcc"):
     """
     this function runs compile commands on os!
@@ -50,29 +32,36 @@ def compile_c(path, compiler="gcc"):
         errors = 0
 
         # iterate over sub directories of path
-        for dir in glob.glob(path + "*/"):
+        for folder in glob.glob(path + "*/"):
 
             # change directory so gcc can compile files from that directory
-            os.chdir(dir)
+            # handles relative imports
+            os.chdir(folder)
 
             # iterate of files in each directory
-            for file in glob.glob(dir + "/*"):
+            for sub_folder in glob.glob(folder + "/*"):
 
                 # if folder contains subfolder, and it isn't __MACOSX
-                if not os.path.basename(file).startswith("_") and os.path.isdir(file):
+                if not os.path.basename(sub_folder).startswith("_") and os.path.isdir(
+                    sub_folder
+                ):
                     # change directory so gcc can compile files from that directory
-                    os.chdir(file)
+                    os.chdir(sub_folder)
 
-                    for subfile in glob.glob(file + "/*"):
+                    for subfile in glob.glob(sub_folder + "/*"):
                         # compile files in subfolder
-                        errors += _compile_helper(subfile)
+                        if _compile_helper(subfile) != 0:
+                            errors += 1
 
                     # move out of subdirectory
                     os.system("cd ..")
 
                 # compile files in main folder
-                errors += _compile_helper(file)
+                if _compile_helper(sub_folder) != 0:
+                    errors += 1
 
         return errors
+    # TODO: add logging, log exception here and in ui.py when extracting files.
+    # Hides exception compiling.
     except:
         return -1

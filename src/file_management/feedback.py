@@ -1,8 +1,10 @@
 import os
+import yaml
+import glob
+import platform
 from docx import Document
 from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
-import yaml
 
 
 def _get_config():
@@ -11,12 +13,44 @@ def _get_config():
         return yaml.load(config, Loader=yaml.FullLoader)
 
 
+def _open_feedback_file():
+    # open file with default app
+    platform_name = platform.system()
+    if platform_name == "Linux":
+        os.system(f"xdg-open {filename}")
+    elif platform_name == "Windows":
+        os.system(f"start {filename}")
+    # OSX
+    elif platform_name == "Darwin":
+        os.system(f"open {filename}")
+    else:
+        print(f"Unrecognised platform {platform_name}")
+
+
 contact_string = (
     f"\nIf you have any questions, please email me at {_get_config().get('email')}"
 )
 
 
-def feedback(path, names, missing):
+def get_missing_names(path, names):
+    """
+    :param path:  path to files
+    :param names: list of names
+    :return:      list of any names without a corresponding file in the path
+    """
+
+    missing_list = []
+    for name in names:
+        # if no files in the directory start with the students name, add it to list of missing names
+        if not any(
+            os.path.basename(file).startswith(name) for file in glob.glob(path + "*")
+        ):
+            missing_list.append(name)
+
+    return missing_list
+
+
+def create_docx_feedback(path, names, missing):
     """
     :param path:    path to files
     :param names:   list of names
@@ -48,9 +82,4 @@ def feedback(path, names, missing):
         os.remove(filename)
 
     d.save(filename)
-    # open file with default app
-    try:
-        os.system("start " + filename)
-    except:
-        # for osx and linux
-        os.system("open " + filename)
+    _open_feedback_file()
