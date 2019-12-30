@@ -4,6 +4,10 @@ from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
 
 
+def _get_config():
+    return yaml.load(os.path.join('..', '..', 'config.yml'))
+
+
 def feedback(path, names, missing):
     '''
     :param path:    path to files
