@@ -36,6 +36,7 @@ def unzip_outer(zip_path, names):
 
     for file_name in archive.namelist():
         # if the current file starts with any of the names in the list of names passed, extract it
+        # if names is [""], everything is extracted, because any_string.startswith("") == True
         if any(file_name.startswith(name) for name in names):
             print("extracting file", file_name)
             # extract file to folder the zipfile is currently in
