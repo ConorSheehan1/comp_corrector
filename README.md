@@ -7,7 +7,7 @@
 
 
 ## How to
-Run ui.py. You should see the interface below:
+Run ```pipenv run ui``` You should see the interface below:
 ![UI image](images/UI.PNG)
 
 1. Click <kbd>choose zip</kbd> to use the default OS file chooser, or enter the path to your zip directly into the **path to zipfile** field
@@ -48,3 +48,14 @@ Run ui.py. You should see the interface below:
 5. **Exception creating feedback.docx** Occurs most likely due to an import error getting docx, or permission being denied to write to feedback.docx because it is already open.
 6. **You must select a zip file to begin** Occurs if the path in the **path to zipfile** field does not end in ".zip"
 ![error compiling files](images/error.PNG)
+
+
+## Development
+Install:  
+```pipenv install --dev```
+
+Tests:
+```pipenv run tests```
+
+Linter:
+```pipenv run lint```

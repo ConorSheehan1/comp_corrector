@@ -1,16 +1,13 @@
-try:
-    from tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
-    from tkinter.filedialog import askopenfilename
-
-    # if python3 tkinter fails, try python 2 Tkinter
-except ImportError:
-    from Tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
-    from tkFileDialog import askopenfilename
+from tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
+from tkinter.filedialog import askopenfilename
 
 import os
 import glob
 import shutil
-from src import main
+
+from file_management.compile import compile_c, missing_names
+from file_management.feedback import feedback
+from file_management.zip_archives import unzip, unzip_outer 
 
 
 class App(object):
@@ -163,22 +160,22 @@ class App(object):
                     shutil.copy2(self.entry_zip_dir.get(), zip_path)
 
                 # if safe mode is enabled, move zip to safe folder, then run, otherwise run in directory zip already is
-                main.unzip_outer(zip_path, names)
+                unzip_outer(zip_path, names)
 
                 # get directory of zipfile, unzip and move files in subdirectories
-                extraction_errors = main.unzip(cwd, rm_zips=self.rm_zips.get())
+                extraction_errors = unzip(cwd, rm_zips=self.rm_zips.get())
                 if extraction_errors:
                     self.error_label.configure(text=self.error_label.cget("text") +
                                                         "Exception extracting: {}\n".format(extraction_errors))
 
-                missing_names = main.missing_names(cwd, names)
+                missing_names = missing_names(cwd, names)
                 if missing_names:
                     self.warning_label.configure(text=self.warning_label.cget("text")
                                                       + "The following students seem to be missing files:\n"
                                                       + str(missing_names))
 
                 if self.compile.get():
-                    compiled = main.compile_c(cwd, "gcc")
+                    compiled = compile_c(cwd, "gcc")
                     if compiled > 0:
                         self.error_label.configure(text=self.error_label.cget("text") +
                                                         "Error compiling {} file(s)\n".format(compiled))
@@ -187,7 +184,7 @@ class App(object):
                                                         "Exception compiling files\n")
                 if self.feedback.get():
                     try:
-                        main.feedback(cwd, names, missing_names)
+                        feedback(cwd, names, missing_names)
                     except:
                         self.error_label.configure(text=self.error_label.cget("text") +
                                                         "Exception creating feedback.docx\n")
