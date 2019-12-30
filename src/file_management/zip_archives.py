@@ -10,19 +10,18 @@ def unzip(path, rm_zips=True):
     """
     errors = []
     # iterate over sub directories of path
-    for dir in glob.glob(path + "*/"):
-
+    for folder in glob.glob(f"{path}*/"):
         # unzip all files in subdirectories
-        for file in glob.glob(dir + "*.zip"):
+        for file_path in glob.glob(f"{folder}*.zip"):
             # extract zip to path
             try:
-                zipfile.ZipFile(file).extractall(dir)
+                zipfile.ZipFile(file_path).extractall(folder)
             except:
-                errors.append(os.path.basename(file))
+                errors.append(os.path.basename(file_path))
 
             # remove zip after extraction
             if rm_zips:
-                os.remove(file)
+                os.remove(file_path)
     return errors
 
 
@@ -35,20 +34,20 @@ def unzip_outer(zip_path, names):
 
     archive = zipfile.ZipFile(zip_path)
 
-    for file in archive.namelist():
+    for file_name in archive.namelist():
         # if the current file starts with any of the names in the list of names passed, extract it
-        if any(file.startswith(name) for name in names):
-            print("extracting file", file)
+        if any(file_name.startswith(name) for name in names):
+            print("extracting file", file_name)
             # extract file to folder the zipfile is currently in
-            archive.extract(file, os.path.dirname(zip_path))
+            archive.extract(file_name, os.path.dirname(zip_path))
 
     archive.close()
 
 
 def remove_empty_folders(path):
     # iterate over sub directories
-    for dir in glob.glob(path + "*"):
+    for folder in glob.glob(path + "*"):
         # double check path is a directory and is empty
-        if os.path.isdir(dir) and not os.listdir(dir):
-            print("removing empty directory", dir)
-            os.rmdir(dir)
+        if os.path.isdir(folder) and not os.listdir(folder):
+            print("removing empty directory", folder)
+            os.rmdir(folder)

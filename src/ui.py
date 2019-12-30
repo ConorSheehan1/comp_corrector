@@ -115,7 +115,7 @@ class App(object):
         Button(
             self.root,
             textvariable=self.buttontext2,
-            command=self.do_work,
+            command=self.run_main,
             bg=self.green,
         ).pack(pady=5)
 
@@ -179,7 +179,26 @@ class App(object):
         # copy zip into safe directory
         shutil.copy2(zip_path, safe_zip_path)
         print("safe mode enabled", zip_path)
-        return safe_cwd, safe_zip_path
+        # should not return safe_zip_path. That would lead to extracting the copied zip, nesting the dir again.
+        # which would in turn cause problems with compiling.
+        # e.g. foo.zip -> copied to foo/foo.zip, then extrac foo/foo.zip, creates foo/foo/the_files, not foo/the_files.
+        return safe_cwd, zip_path
+
+    def run_compile(self, cwd):
+        try:
+            compiled = compile_c(cwd, "gcc")
+            if compiled > 0:
+                self.append_error(f"Error compiling {compiled} file(s)")
+        except:
+            self.append_error(f"Exception compiling file(s)")
+            raise
+
+    def run_feedbac(self, cwd, names, missing_names):
+        try:
+            create_docx_feedback(cwd, names, missing_names)
+        except:
+            self.append_error("Exception creating feedback.docx")
+            raise
 
     def main(self):
         self.flush_labels()
@@ -189,22 +208,22 @@ class App(object):
         except:
             self.append_error("Exception parsing names")
             print("Exception parsing names")
-            # break out of function
-            return
+            return False
 
         zip_path = self.entry_zip_dir.get()
         if not zip_path.endswith(".zip"):
             self.append_error(f"You must select a .zip file to begin. Got {zip_path}")
-            return
+            return False
 
         # at this point names are list of strings and directory is correct
         cwd = os.path.dirname(zip_path)
 
         if self.entry_names.get().strip() == "":
-            self.append_warning.configure(
+            self.append_warning(
                 f"No names included. All files will be extracted and feedback.docx will be empty"
             )
 
+        # TODO: remove concept of safemode. Always run this way, don't allow unsafe mode.
         if self.safe_mode.get():
             cwd, zip_path = self.setup_safe_mode(cwd, zip_path)
 
@@ -224,29 +243,21 @@ class App(object):
             )
 
         if self.compile.get():
-            compiled = compile_c(cwd, "gcc")
-            if compiled > 0:
-                self.append_error(f"Error compiling {compiled} file(s)")
-            if compiled == -1:
-                self.append_error(f"Exception compiling file(s)")
+            self.run_compile(cwd)
 
         if self.feedback.get():
-            try:
-                create_docx_feedback(cwd, names, missing_names)
-            except:
-                self.append_error("Exception creating feedback.docx")
+            self.run_feedbac(cwd, names, missing_names)
 
         self.completion_label.configure(text="Finished!")
         print("Finished!")
 
-    # TODO: refactor and rename
-    def do_work(self):
+    def run_main(self):
         try:
             self.main()
         except:
             # catch exception to allow prompt within ui, then re-raise exception
             self.error_label.configure(
-                text=f"{self.error_label.cget('text')} Exception extracting files. Check the console\n"
+                text=f"{self.error_label.cget('text')} Unhandled Exception. Check the console\n"
             )
             raise
 
