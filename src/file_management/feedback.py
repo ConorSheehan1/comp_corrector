@@ -2,22 +2,30 @@ import os
 from docx import Document
 from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
+import yaml
 
 
 def _get_config():
-    return yaml.load(os.path.join('..', '..', 'config.yml'))
+    # return yaml.dump(yaml.load(os.path.join("..", "..", "config.yml")))
+    with open("config.yml") as config:
+        return yaml.load(config, Loader=yaml.FullLoader)
+
+
+contact_string = (
+    f"\nIf you have any questions, please email me at {_get_config().get('email')}"
+)
 
 
 def feedback(path, names, missing):
-    '''
+    """
     :param path:    path to files
     :param names:   list of names
     :return:        None
-    '''
+    """
 
     # change to path where file should be saved
     os.chdir(path)
-    filename = 'feedback.docx'
+    filename = "feedback.docx"
     d = Document()
 
     # create table to store feedback
@@ -30,10 +38,10 @@ def feedback(path, names, missing):
             row[1].text = "no file submitted"
             # https://groups.google.com/forum/#!topic/python-docx/-c3OrRHA3qo
             # no api for changing color of individual cell, modify underlying xml
-            shading_elm = parse_xml(r'<w:shd {} w:fill="F20C0C"/>'.format(nsdecls('w')))
+            shading_elm = parse_xml(r'<w:shd {} w:fill="F20C0C"/>'.format(nsdecls("w")))
             row[1]._tc.get_or_add_tcPr().append(shading_elm)
         else:
-            row[1].text = f"\nIf you have any questions, please email me at {get_config.get('email')}"
+            row[1].text = contact_string
 
     # account for file already existing
     if os.path.exists(filename):

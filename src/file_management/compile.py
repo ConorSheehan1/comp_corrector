@@ -4,16 +4,18 @@ import yaml
 
 
 def missing_names(path, names):
-    '''
+    """
     :param path:  path to files
     :param names: list of names
     :return:      list of any names without a corresponding file in the path
-    '''
+    """
 
     missing_list = []
     for name in names:
         # if no files in the directory start with the students name, add it to list of missing names
-        if not any(os.path.basename(file).startswith(name) for file in glob.glob(path + "*")):
+        if not any(
+            os.path.basename(file).startswith(name) for file in glob.glob(path + "*")
+        ):
             missing_list.append(name)
 
     return missing_list
@@ -26,7 +28,9 @@ def _compile_helper(helper_file, compiler="gcc"):
     if helper_file.lower().endswith(".c"):
         helper_file_name = os.path.basename(helper_file)
         # command = compiler + " -o " + helper_file_name.split(".")[0] + " " + helper_file_name
-        command = f"{compiler} -o {os.path.splitext(helper_file_name)[0]} {helper_file_name}"
+        command = (
+            f"{compiler} -o {os.path.splitext(helper_file_name)[0]} {helper_file_name}"
+        )
         print("running in dir", os.getcwd())
 
         # will return 0 if successfully compiled, 1 if not
@@ -36,11 +40,11 @@ def _compile_helper(helper_file, compiler="gcc"):
 
 
 def compile_c(path, compiler="gcc"):
-    '''
+    """
     :param path:      path to files
     :param compiler:  name of compiler to use
     :return:          number of files which fail to compile (-1 if exception occurs)
-    '''
+    """
 
     try:
         errors = 0
@@ -72,4 +76,3 @@ def compile_c(path, compiler="gcc"):
         return errors
     except:
         return -1
-        

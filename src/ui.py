@@ -7,7 +7,7 @@ import shutil
 
 from file_management.compile import compile_c, missing_names
 from file_management.feedback import feedback
-from file_management.zip_archives import unzip, unzip_outer 
+from file_management.zip_archives import unzip, unzip_outer
 
 
 class App(object):
@@ -30,42 +30,71 @@ class App(object):
 
         # text entry for zip path
         self.zip_dir = StringVar()
-        self.entry_zip_dir = Entry(self.root, textvariable=self.zip_dir, width="400", bg=self.grey)
+        self.entry_zip_dir = Entry(
+            self.root, textvariable=self.zip_dir, width="400", bg=self.grey
+        )
         self.entry_zip_dir.pack(pady=5)
 
         # open zip button
         self.buttontext = StringVar()
         self.buttontext.set("CHOOSE ZIP")
-        Button(self.root, textvariable=self.buttontext, command=self.open_file, bg=self.yellow).pack(pady=5)
+        Button(
+            self.root,
+            textvariable=self.buttontext,
+            command=self.open_file,
+            bg=self.yellow,
+        ).pack(pady=5)
 
         self.label = Label(self.root, text="list of names")
         self.label.pack(pady=5)
 
         # text entry for names
         self.names = StringVar()
-        self.entry_names = Entry(self.root, textvariable=self.names, width="400", bg=self.grey)
+        self.entry_names = Entry(
+            self.root, textvariable=self.names, width="400", bg=self.grey
+        )
         self.entry_names.pack(pady=5)
 
         # check-boxes
         self.rm_zips = IntVar()
         self.rm_zips.set(False)
-        self.check_rm_zips = Checkbutton(self.root, variable=self.rm_zips, onvalue=True, offvalue=False,
-                                         text="remove zips")
+        self.check_rm_zips = Checkbutton(
+            self.root,
+            variable=self.rm_zips,
+            onvalue=True,
+            offvalue=False,
+            text="remove zips",
+        )
 
         self.compile = IntVar()
         self.compile.set(False)
-        self.check_compile = Checkbutton(self.root, variable=self.compile, onvalue=True, offvalue=False,
-                                         text="compile files")
+        self.check_compile = Checkbutton(
+            self.root,
+            variable=self.compile,
+            onvalue=True,
+            offvalue=False,
+            text="compile files",
+        )
 
         self.safe_mode = IntVar()
         self.safe_mode.set(False)
-        self.check_safe_mode = Checkbutton(self.root, variable=self.safe_mode, onvalue=True, offvalue=False,
-                                         text="safe mode")
+        self.check_safe_mode = Checkbutton(
+            self.root,
+            variable=self.safe_mode,
+            onvalue=True,
+            offvalue=False,
+            text="safe mode",
+        )
 
         self.feedback = IntVar()
         self.feedback.set(False)
-        self.check_feedback = Checkbutton(self.root, variable=self.feedback, onvalue=True, offvalue=False,
-                                         text="feedback.docx")
+        self.check_feedback = Checkbutton(
+            self.root,
+            variable=self.feedback,
+            onvalue=True,
+            offvalue=False,
+            text="feedback.docx",
+        )
 
         # have checkbox checked by default
         self.check_rm_zips.select()
@@ -82,14 +111,21 @@ class App(object):
         # set open dir button
         self.buttontext2 = StringVar()
         self.buttontext2.set("START")
-        Button(self.root, textvariable=self.buttontext2, command=self.do_work, bg=self.green).pack(pady=5)
+        Button(
+            self.root,
+            textvariable=self.buttontext2,
+            command=self.do_work,
+            bg=self.green,
+        ).pack(pady=5)
 
         # label for errors
         self.error_label = Label(self.root, text="", foreground="red", bg=self.grey)
         self.error_label.pack(pady=5)
 
         # label for warnings
-        self.warning_label = Label(self.root, text="", foreground=self.yellow, bg=self.grey)
+        self.warning_label = Label(
+            self.root, text="", foreground=self.yellow, bg=self.grey
+        )
         self.warning_label.pack(pady=5)
 
         # label for completion
@@ -112,8 +148,13 @@ class App(object):
             # throw error
             self.error_label.configure(text="File must end with '.zip'")
 
-        if not self.safe_mode and len(glob.glob(os.path.dirname(self.entry_zip_dir.get()) + "/*")) > 1:
-            self.warning_label.configure(text="Be careful, there's multiple items in the current directory")
+        if (
+            not self.safe_mode
+            and len(glob.glob(os.path.dirname(self.entry_zip_dir.get()) + "/*")) > 1
+        ):
+            self.warning_label.configure(
+                text="Be careful, there are multiple items in the current directory"
+            )
 
     def do_work(self):
         # flush all labels
@@ -127,33 +168,45 @@ class App(object):
             names = list(map(lambda n: n.replace("'", ""), names))
         except:
             # append error to label
-            self.error_label.configure(text=self.error_label.cget("text") + "Exception parsing names\n")
+            self.error_label.configure(
+                text=f"{self.error_label.cget('text')} Exception parsing names\n"
+            )
             print("Exception parsing names")
             # break out of function
             return
         try:
             if self.entry_zip_dir.get() == "":
                 # append to label
-                self.error_label.configure(text=self.error_label.cget("text") + "You must select a zip file to begin\n")
+                self.error_label.configure(
+                    text=f"{self.error_label.cget('text')} You must select a zip file to begin\n"
+                )
             else:
                 # at this point names are list of strings and directory is correct
                 cwd = os.path.dirname(self.entry_zip_dir.get()) + "/"
                 zip_path = self.entry_zip_dir.get()
 
                 if self.entry_names.get().strip() == "":
-                    self.warning_label.configure(text=self.warning_label.cget("text") +
-                                "No names included. All files will be extracted and feedback.docx will be empty\n")
+                    self.warning_label.configure(
+                        text=(
+                            f"{self.error_label.cget('text')} No names included. "
+                            f"All files will be extracted and feedback.docx will be empty\n"
+                        )
+                    )
 
                 if self.safe_mode.get():
                     # make dir same name as zip (remove file extension, add slash)
-                    safe_dir = os.path.basename(self.entry_zip_dir.get()).split(".")[0]+"/"
+                    safe_dir = (
+                        os.path.basename(self.entry_zip_dir.get()).split(".")[0] + "/"
+                    )
                     # create safe dir if it doesn't exist
                     if not os.path.exists(cwd + safe_dir):
                         os.mkdir(cwd + safe_dir)
 
                     # add safe dir to cwd and zip_path
                     cwd += safe_dir
-                    zip_path = cwd + os.path.basename(self.entry_zip_dir.get())
+                    zip_path = os.path.join(
+                        cwd, os.path.basename(self.entry_zip_dir.get())
+                    )
                     print("safe mode enabled", zip_path)
 
                     # copy zip into safe directory
@@ -165,35 +218,49 @@ class App(object):
                 # get directory of zipfile, unzip and move files in subdirectories
                 extraction_errors = unzip(cwd, rm_zips=self.rm_zips.get())
                 if extraction_errors:
-                    self.error_label.configure(text=self.error_label.cget("text") +
-                                                        "Exception extracting: {}\n".format(extraction_errors))
+                    self.error_label.configure(
+                        text=(
+                            f"{self.error_label.cget('text')} "
+                            f"Exception extracting: {extraction_errors}\n"
+                        )
+                    )
 
                 missing_names = missing_names(cwd, names)
                 if missing_names:
-                    self.warning_label.configure(text=self.warning_label.cget("text")
-                                                      + "The following students seem to be missing files:\n"
-                                                      + str(missing_names))
+                    self.warning_label.configure(
+                        text=(
+                            f"{self.warning_label.cget('text')} "
+                            f"The following students seem to be missing files: {missing_names}"
+                        )
+                    )
 
                 if self.compile.get():
                     compiled = compile_c(cwd, "gcc")
                     if compiled > 0:
-                        self.error_label.configure(text=self.error_label.cget("text") +
-                                                        "Error compiling {} file(s)\n".format(compiled))
+                        # TODO: extract into function to append error message?
+                        self.error_label.configure(
+                            text=f"{self.error_label.cget('text')} Error compiling {compiled} file(s)\n"
+                        )
                     if compiled == -1:
-                        self.error_label.configure(text=self.error_label.cget("text") +
-                                                        "Exception compiling files\n")
+                        self.error_label.configure(
+                            text=f"{self.error_label.cget('text')} Exception compiling files\n"
+                        )
                 if self.feedback.get():
                     try:
                         feedback(cwd, names, missing_names)
                     except:
-                        self.error_label.configure(text=self.error_label.cget("text") +
-                                                        "Exception creating feedback.docx\n")
+                        self.error_label.configure(
+                            text=f"{self.error_label.cget('text')} Exception creating feedback.docx\n"
+                        )
 
                 self.completion_label.configure(text="Finished!")
                 print("Finished!")
         except:
             # catch exception to allow prompt within ui, then re-raise exception
-            self.error_label.configure(text=self.error_label.cget("text") + "Exception extracting files. Check the console\n")
+            self.error_label.configure(
+                text=f"{self.error_label.cget('text')} Exception extracting files. Check the console\n"
+            )
             raise
+
 
 App()

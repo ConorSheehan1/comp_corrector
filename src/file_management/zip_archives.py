@@ -3,10 +3,10 @@ import zipfile
 
 
 def unzip(path, rm_zips=True):
-    '''
+    """
     :param path: path to zip file
     :param rm_zips: bool to remove zip archives once extracted
-    '''
+    """
     errors = []
     # iterate over sub directories of path
     for dir in glob.glob(path + "*/"):
@@ -26,11 +26,11 @@ def unzip(path, rm_zips=True):
 
 
 def unzip_outer(zip_path, names):
-    '''
+    """
     :param zip_path: path to zip file
     :param names:   list of strings
     :return:        extract any files in zipfile that start with name specified
-    '''
+    """
 
     archive = zipfile.ZipFile(zip_path)
 
