@@ -13,7 +13,7 @@ def _get_config():
         return yaml.load(config, Loader=yaml.FullLoader)
 
 
-def _open_feedback_file():
+def _open_file(filename):
     # open file with default app
     platform_name = platform.system()
     if platform_name == "Linux":
@@ -30,6 +30,12 @@ def _open_feedback_file():
 contact_string = (
     f"\nIf you have any questions, please email me at {_get_config().get('email')}"
 )
+
+
+def format_names(names):
+    names = names.split("\n")
+    # remove single quotes in all names
+    return list(map(lambda n: n.replace("'", ""), names))
 
 
 def get_missing_names(path, names):
@@ -82,4 +88,4 @@ def create_docx_feedback(path, names, missing):
         os.remove(filename)
 
     d.save(filename)
-    _open_feedback_file()
+    _open_file(filename)

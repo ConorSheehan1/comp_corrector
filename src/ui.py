@@ -6,7 +6,11 @@ import glob
 import shutil
 
 from file_management.compile import compile_c
-from file_management.feedback import create_docx_feedback, get_missing_names
+from file_management.feedback import (
+    create_docx_feedback,
+    get_missing_names,
+    format_names,
+)
 from file_management.zip_archives import unzip, unzip_outer
 
 
@@ -25,9 +29,6 @@ class App(object):
         self.label = Label(self.root, text="path to zipfile")
         self.label.pack(pady=5)
 
-        # set remove dirs to true by default, why keep empty folders?
-        self.rm_dirs = True
-
         # text entry for zip path
         self.zip_dir = StringVar()
         self.entry_zip_dir = Entry(
@@ -41,7 +42,7 @@ class App(object):
         Button(
             self.root,
             textvariable=self.buttontext,
-            command=self.open_file,
+            command=self.select_zip_file,
             bg=self.yellow,
         ).pack(pady=5)
 
@@ -134,128 +135,114 @@ class App(object):
 
         self.root.mainloop()
 
-    def open_file(self):
-        # flush error label
-        self.warning_label.configure(text="")
+    def append_warning(self, warning_text):
+        self.warning_label.configure(
+            text=f"{self.warning_label.cget('text')} {warning_text}\n"
+        )
 
-        filename = askopenfilename()
-        if filename.endswith(".zip"):
-            # flush old text
-            self.entry_zip_dir.delete(0, END)
-            # insert new text
-            self.entry_zip_dir.insert(0, filename)
-        else:
-            # throw error
-            self.error_label.configure(text="File must end with '.zip'")
+    def append_error(self, error_text):
+        self.error_label.configure(
+            text=f"{self.error_label.cget('text')} {error_text}\n"
+        )
 
-        if (
-            not self.safe_mode
-            and len(glob.glob(os.path.dirname(self.entry_zip_dir.get()) + "/*")) > 1
-        ):
-            self.warning_label.configure(
-                text="Be careful, there are multiple items in the current directory"
-            )
-
-    # TODO: refactor and rename
-    def do_work(self):
-        # flush all labels
+    def flush_labels(self):
         self.warning_label.configure(text="")
         self.error_label.configure(text="")
         self.completion_label.configure(text="")
 
-        try:
-            names = self.entry_names.get().split("\n")
-            # remove ' in all strings
-            names = list(map(lambda n: n.replace("'", ""), names))
-        except:
-            # append error to label
-            self.error_label.configure(
-                text=f"{self.error_label.cget('text')} Exception parsing names\n"
+    def select_zip_file(self):
+        self.flush_labels()
+        filename = askopenfilename()
+        if filename.endswith(".zip"):
+            # flush old text and insert new selected file
+            self.entry_zip_dir.delete(0, END)
+            self.entry_zip_dir.insert(0, filename)
+        else:
+            self.append_error(f"You must select a .zip file to begin. Got {filename}")
+
+        file_dir = os.path.dirname(filename)
+        if not self.safe_mode.get() and len(glob.glob(f"{file_dir}/*")) > 1:
+            self.append_warning(
+                f"Be careful, there are multiple items in the current directory: {file_dir}"
             )
+
+    def setup_safe_mode(self, cwd, zip_path):
+        # make dir same name as zip (remove file extension, add slash)
+        safe_dirname = os.path.basename(zip_path).split(".")[0]
+        safe_cwd = os.path.join(cwd, safe_dirname)
+        # create safe dir if it doesn't exist
+        if not os.path.exists(safe_cwd):
+            os.mkdir(safe_cwd)
+
+        safe_zip_path = os.path.join(safe_cwd, os.path.basename(zip_path))
+
+        # copy zip into safe directory
+        shutil.copy2(zip_path, safe_zip_path)
+        print("safe mode enabled", zip_path)
+        return safe_cwd, safe_zip_path
+
+    def main(self):
+        self.flush_labels()
+
+        try:
+            names = format_names(self.entry_names.get())
+        except:
+            self.append_error("Exception parsing names")
             print("Exception parsing names")
             # break out of function
             return
+
+        zip_path = self.entry_zip_dir.get()
+        if not zip_path.endswith(".zip"):
+            self.append_error(f"You must select a .zip file to begin. Got {zip_path}")
+            return
+
+        # at this point names are list of strings and directory is correct
+        cwd = os.path.dirname(zip_path)
+
+        if self.entry_names.get().strip() == "":
+            self.append_warning.configure(
+                f"No names included. All files will be extracted and feedback.docx will be empty"
+            )
+
+        if self.safe_mode.get():
+            cwd, zip_path = self.setup_safe_mode(cwd, zip_path)
+
+        # if safe mode is enabled, move zip to safe folder, then run.
+        # otherwise run in directory zip already is.
+        unzip_outer(zip_path, names)
+
+        # get directory of zipfile, unzip and move files in subdirectories
+        extraction_errors = unzip(cwd, rm_zips=self.rm_zips.get())
+        if extraction_errors:
+            self.append_error(f"Exception extracting: {extraction_errors}")
+
+        missing_names = get_missing_names(cwd, names)
+        if missing_names:
+            self.append_warning(
+                f"The following students seem to be missing files: {missing_names}"
+            )
+
+        if self.compile.get():
+            compiled = compile_c(cwd, "gcc")
+            if compiled > 0:
+                self.append_error(f"Error compiling {compiled} file(s)")
+            if compiled == -1:
+                self.append_error(f"Exception compiling file(s)")
+
+        if self.feedback.get():
+            try:
+                create_docx_feedback(cwd, names, missing_names)
+            except:
+                self.append_error("Exception creating feedback.docx")
+
+        self.completion_label.configure(text="Finished!")
+        print("Finished!")
+
+    # TODO: refactor and rename
+    def do_work(self):
         try:
-            if self.entry_zip_dir.get() == "":
-                # append to label
-                self.error_label.configure(
-                    text=f"{self.error_label.cget('text')} You must select a zip file to begin\n"
-                )
-            else:
-                # at this point names are list of strings and directory is correct
-                cwd = os.path.dirname(self.entry_zip_dir.get()) + "/"
-                zip_path = self.entry_zip_dir.get()
-
-                if self.entry_names.get().strip() == "":
-                    self.warning_label.configure(
-                        text=(
-                            f"{self.error_label.cget('text')} No names included. "
-                            f"All files will be extracted and feedback.docx will be empty\n"
-                        )
-                    )
-
-                if self.safe_mode.get():
-                    # make dir same name as zip (remove file extension, add slash)
-                    safe_dir = (
-                        os.path.basename(self.entry_zip_dir.get()).split(".")[0] + "/"
-                    )
-                    # create safe dir if it doesn't exist
-                    if not os.path.exists(cwd + safe_dir):
-                        os.mkdir(cwd + safe_dir)
-
-                    # add safe dir to cwd and zip_path
-                    cwd += safe_dir
-                    zip_path = os.path.join(
-                        cwd, os.path.basename(self.entry_zip_dir.get())
-                    )
-                    print("safe mode enabled", zip_path)
-
-                    # copy zip into safe directory
-                    shutil.copy2(self.entry_zip_dir.get(), zip_path)
-
-                # if safe mode is enabled, move zip to safe folder, then run, otherwise run in directory zip already is
-                unzip_outer(zip_path, names)
-
-                # get directory of zipfile, unzip and move files in subdirectories
-                extraction_errors = unzip(cwd, rm_zips=self.rm_zips.get())
-                if extraction_errors:
-                    self.error_label.configure(
-                        text=(
-                            f"{self.error_label.cget('text')} "
-                            f"Exception extracting: {extraction_errors}\n"
-                        )
-                    )
-
-                missing_names = get_missing_names(cwd, names)
-                if missing_names:
-                    self.warning_label.configure(
-                        text=(
-                            f"{self.warning_label.cget('text')} "
-                            f"The following students seem to be missing files: {missing_names}"
-                        )
-                    )
-
-                if self.compile.get():
-                    compiled = compile_c(cwd, "gcc")
-                    if compiled > 0:
-                        # TODO: extract into function to append error message?
-                        self.error_label.configure(
-                            text=f"{self.error_label.cget('text')} Error compiling {compiled} file(s)\n"
-                        )
-                    if compiled == -1:
-                        self.error_label.configure(
-                            text=f"{self.error_label.cget('text')} Exception compiling files\n"
-                        )
-                if self.feedback.get():
-                    try:
-                        create_docx_feedback(cwd, names, missing_names)
-                    except:
-                        self.error_label.configure(
-                            text=f"{self.error_label.cget('text')} Exception creating feedback.docx\n"
-                        )
-
-                self.completion_label.configure(text="Finished!")
-                print("Finished!")
+            self.main()
         except:
             # catch exception to allow prompt within ui, then re-raise exception
             self.error_label.configure(
@@ -264,4 +251,5 @@ class App(object):
             raise
 
 
-App()
+if __name__ == "__main__":
+    App()
