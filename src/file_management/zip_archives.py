@@ -10,7 +10,7 @@ def unzip(path, rm_zips=True):
     """
     errors = []
     # iterate over sub directories of path
-    for folder in glob.glob(f"{path}*/"):
+    for folder in glob.glob(f"{path}/*/"):
         # unzip all files in subdirectories
         for file_path in glob.glob(f"{folder}*.zip"):
             # extract zip to path
