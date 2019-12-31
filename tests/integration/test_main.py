@@ -8,10 +8,9 @@ import shutil
 
 # functions under test
 from src.file_management.zip_archives import unzip, unzip_outer
+from src.file_management.feedback import get_missing_names
 
 
-# tests need to be run in order.
-# not ideal, but will do until testing tkinter directly, or using different UI framework.
 class TestMain(unittest.TestCase):
     example_dir = os.path.join("tests", "fixtures", "example")
 
@@ -22,27 +21,33 @@ class TestMain(unittest.TestCase):
         self.example_student_dir = os.path.join(
             self.example_dir, "final_fake_student_2012347", "assignment1"
         )
-
-    # def tearDown(self):
-    #     # delete non-empty example dir
-    #     shutil.rmtree(self.example_dir, ignore_errors=True)
+        self.all_names = ["fake_student", "other_fake_student", "final_fake_student"]
 
     @classmethod
     def tearDownClass(cls):
         # delete non-empty example dir
         shutil.rmtree(cls.example_dir, ignore_errors=True)
 
-    def test_unzip(self):
+    # https://stackoverflow.com/a/18627017/6305204
+    # nosetests runs tests in order by name
+    # not ideal, but need to enforce order until testing tkinter directly, or using different UI framework.
+    def test_01_unzip(self):
         # example dir should not exist yet
         assert not os.path.exists(self.example_dir)
         # when names is [""], everything is extracted
         unzip_outer(self.example_zip, [""])
         assert os.path.exists(self.example_dir)
 
-    def test_unzip_inner(self):
+    def test_02_unzip_inner(self):
         assert not os.path.exists(self.example_student_dir)
         unzip(self.example_dir)
         assert os.path.exists(self.example_student_dir)
+
+    def test_03_missing_names(self):
+        missing_names = get_missing_names(
+            self.example_dir, self.all_names + ["missing_student"]
+        )
+        self.assertListEqual(["missing_student"], missing_names)
 
 
 if __name__ == "__main__":

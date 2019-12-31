@@ -48,8 +48,10 @@ def get_missing_names(path, names):
     missing_list = []
     for name in names:
         # if no files in the directory start with the students name, add it to list of missing names
+        # note: must be /*, /*/ will cause basename to return ''
         if not any(
-            os.path.basename(file).startswith(name) for file in glob.glob(path + "*")
+            os.path.basename(file_path).startswith(name)
+            for file_path in glob.glob(f"{path}/*")
         ):
             missing_list.append(name)
 
