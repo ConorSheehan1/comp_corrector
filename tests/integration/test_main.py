@@ -1,3 +1,9 @@
+"""
+These tests are considered integration tests because they have side effects.
+They write to the file system (in tests/fixtures/example).
+They rely on gcc being available.
+"""
+
 # TODO: rename to test_ui and setup mocking with tkinter
 # for now, run all the steps that ui.py would run in main, but without errors and warnings for the user
 import unittest

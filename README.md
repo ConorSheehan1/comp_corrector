@@ -1,3 +1,6 @@
+[![Build Status](https://github.com/ConorSheehan1/comp_corrector/workflows/ci/badge.svg)](https://github.com/ConorSheehan1/comp_corrector/actions/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Requirements
 1. python [tkinter, docx]
     ```sudo apt-get install python3-tk```
@@ -6,7 +9,7 @@
     ```sudo apt-get install libxml2-dev libxslt-dev python-dev```
 
 
-## How to
+## How to use
 Run ```pipenv run ui``` You should see the interface below:
 ![UI image](.github/imagesUI.PNG)
 
