@@ -5,6 +5,7 @@
 1. python [tkinter, docx]
     ```sudo apt-get install python3-tk```
 2. gcc (in order to use the compile files option)
+    ```sudo apt-get install gcc musl-dev```
 3. You may need to install libxml
     ```sudo apt-get install libxml2-dev libxslt-dev python-dev```
 
