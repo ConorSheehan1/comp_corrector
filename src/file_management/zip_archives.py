@@ -1,6 +1,7 @@
 import os
 import glob
 import zipfile
+import shutil
 
 
 def unzip(path, rm_zips=True):
@@ -45,10 +46,26 @@ def unzip_outer(zip_path, names):
     archive.close()
 
 
+def setup_safe_mode(cwd, zip_path):
+    # make dir same name as zip (remove file extension, add slash)
+    safe_dirname = os.path.basename(zip_path).split(".")[0]
+    safe_cwd = os.path.join(cwd, safe_dirname)
+    # create safe dir if it doesn't exist
+    if not os.path.exists(safe_cwd):
+        os.mkdir(safe_cwd)
+
+    safe_zip_path = os.path.join(safe_cwd, os.path.basename(zip_path))
+
+    # copy zip into safe directory before extracting.
+    shutil.copy2(zip_path, safe_zip_path)
+    print("safe mode enabled", zip_path)
+    return safe_cwd, safe_zip_path
+
+
 def remove_empty_folders(path):
     # iterate over sub directories
-    for folder in glob.glob(path + "*"):
+    for folder in glob.glob(f"{path}/*/"):
         # double check path is a directory and is empty
         if os.path.isdir(folder) and not os.listdir(folder):
             print("removing empty directory", folder)
-            os.rmdir(folder)
+            os.rmdir(folder)  # will fail if the dir is not empty

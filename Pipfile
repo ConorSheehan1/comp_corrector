@@ -6,6 +6,7 @@ verify_ssl = true
 [scripts]
 ui = "python src/ui.py"
 tests = "nosetests"
+debug_tests = "nosetests -s"
 lint = "black ."
 
 [dev-packages]

@@ -3,7 +3,6 @@ from tkinter.filedialog import askopenfilename
 
 import os
 import glob
-import shutil
 
 from file_management.compile import compile_c
 from file_management.feedback import (
@@ -11,7 +10,7 @@ from file_management.feedback import (
     get_missing_names,
     format_names,
 )
-from file_management.zip_archives import unzip, unzip_outer
+from file_management.zip_archives import unzip, unzip_outer, setup_safe_mode
 
 
 class App(object):
@@ -166,27 +165,9 @@ class App(object):
                 f"Be careful, there are multiple items in the current directory: {file_dir}"
             )
 
-    def setup_safe_mode(self, cwd, zip_path):
-        # make dir same name as zip (remove file extension, add slash)
-        safe_dirname = os.path.basename(zip_path).split(".")[0]
-        safe_cwd = os.path.join(cwd, safe_dirname)
-        # create safe dir if it doesn't exist
-        if not os.path.exists(safe_cwd):
-            os.mkdir(safe_cwd)
-
-        safe_zip_path = os.path.join(safe_cwd, os.path.basename(zip_path))
-
-        # copy zip into safe directory
-        shutil.copy2(zip_path, safe_zip_path)
-        print("safe mode enabled", zip_path)
-        # should not return safe_zip_path. That would lead to extracting the copied zip, nesting the dir again.
-        # which would in turn cause problems with compiling.
-        # e.g. foo.zip -> copied to foo/foo.zip, then extrac foo/foo.zip, creates foo/foo/the_files, not foo/the_files.
-        return safe_cwd, zip_path
-
     def run_compile(self, cwd):
         try:
-            compiled = compile_c(cwd, "gcc")
+            compiled = compile_c(cwd)
             if compiled > 0:
                 self.append_error(f"Error compiling {compiled} file(s)")
         except:
@@ -225,7 +206,7 @@ class App(object):
 
         # TODO: remove concept of safemode. Always run this way, don't allow unsafe mode.
         if self.safe_mode.get():
-            cwd, zip_path = self.setup_safe_mode(cwd, zip_path)
+            cwd, zip_path = setup_safe_mode(cwd, zip_path)
 
         # if safe mode is enabled, move zip to safe folder, then run.
         # otherwise run in directory zip already is.
