@@ -6,9 +6,10 @@ import glob
 
 from file_management.compile import compile_c
 from file_management.feedback import (
-    create_docx_feedback,
+    create_feedback_file,
     get_missing_names,
     format_names,
+    open_feedback_file,
 )
 from file_management.zip_archives import unzip, unzip_outer, setup_safe_mode
 
@@ -176,7 +177,8 @@ class App(object):
 
     def run_feedbac(self, cwd, names, missing_names):
         try:
-            create_docx_feedback(cwd, names, missing_names)
+            feedback_file = create_feedback_file(cwd, names, missing_names)
+            open_feedback_file(feedback_file)
         except:
             self.append_error("Exception creating feedback.docx")
             raise

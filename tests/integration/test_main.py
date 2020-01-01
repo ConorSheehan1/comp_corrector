@@ -9,11 +9,12 @@ import re
 
 # functions under test
 from src.file_management.zip_archives import unzip, unzip_outer, setup_safe_mode
-from src.file_management.feedback import get_missing_names
+from src.file_management.feedback import get_missing_names, create_feedback_file
 from src.file_management.compile import compile_c
 
 
 class TestMainSafeMode(unittest.TestCase):
+    # needed as class variables to run teardown after all tests, instead of each test.
     cwd = os.path.join("tests", "fixtures")
     safe_cwd = os.path.join(cwd, "example")
 
@@ -28,7 +29,9 @@ class TestMainSafeMode(unittest.TestCase):
         self.example_student_code = os.path.join(
             self.example_student_dir, "assignment1", "assignment1.c"
         )
+        self.feedback_file = os.path.join(self.safe_cwd, "feedback.docx")
         self.all_names = ["fake_student", "other_fake_student", "final_fake_student"]
+        self.missing_names = ["missing_student"]
 
     @classmethod
     def tearDownClass(cls):
@@ -39,6 +42,9 @@ class TestMainSafeMode(unittest.TestCase):
     # nosetests runs tests in order by name
     # not ideal, but need to enforce order until testing tkinter directly, or using different UI framework.
     def test_01_safe_mode(self):
+        """
+        setup_safe_mode should create a new dir and move the main .zip archive into it before extracting
+        """
         # example dir should not exist yet
         assert not os.path.exists(self.safe_cwd)
         assert not os.path.exists(self.safe_zip_path)
@@ -47,21 +53,30 @@ class TestMainSafeMode(unittest.TestCase):
         assert os.path.exists(self.zip_path)
 
     def test_02_unzip(self):
+        """
+        unzip_outer should unzip the main .zip archive
+        """
         assert not os.path.exists(self.example_student_dir)
         # when names is [""], everything is extracted
         unzip_outer(self.safe_zip_path, [""])
         assert os.path.exists(self.example_student_dir)
 
     def test_03_unzip_inner(self):
+        """
+        unzip should unzip each students .zip archives nested in the main zip archive
+        """
         assert not os.path.exists(self.example_student_code)
         unzip(self.safe_cwd)
         assert os.path.exists(self.example_student_code)
 
     def test_04_missing_names(self):
+        """
+        get_missing_names should return names of students who didn't submit anything
+        """
         missing_names = get_missing_names(
-            self.safe_cwd, self.all_names + ["missing_student"]
+            self.safe_cwd, self.all_names + self.missing_names
         )
-        self.assertListEqual(["missing_student"], missing_names)
+        self.assertListEqual(self.missing_names, missing_names)
 
     def test_05_compile(self):
         """
@@ -74,6 +89,14 @@ class TestMainSafeMode(unittest.TestCase):
         # hide output for tests
         errors = compile_c(self.safe_cwd, capture_output=True)
         assert os.path.exists(compiled_file)
+
+    def test_06_feedback(self):
+        """
+        create_feedback_file should create feedback.docx
+        """
+        assert not os.path.exists(self.feedback_file)
+        create_feedback_file(self.safe_cwd, self.all_names, self.missing_names)
+        assert os.path.exists(self.feedback_file)
 
 
 if __name__ == "__main__":

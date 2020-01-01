@@ -21,7 +21,7 @@ def _compile_cfile(file_path, cwd, compiler, capture_output):
     command = [compiler, f"-o{os.path.splitext(file_name)[0]}", file_name]
 
     # TODO: when python 3.7 works with lxml, use capture_output=True here instead of stderr=PIPE
-    kwargs = {'cwd': cwd}
+    kwargs = {"cwd": cwd}
     if capture_output:
         kwargs["stdout"] = PIPE
         kwargs["stderr"] = PIPE

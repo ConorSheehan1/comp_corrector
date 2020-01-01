@@ -13,20 +13,6 @@ def _get_config():
         return yaml.load(config, Loader=yaml.FullLoader)
 
 
-def _open_file(filename):
-    # open file with default app
-    platform_name = platform.system()
-    if platform_name == "Linux":
-        os.system(f"xdg-open {filename}")
-    elif platform_name == "Windows":
-        os.system(f"start {filename}")
-    # OSX
-    elif platform_name == "Darwin":
-        os.system(f"open {filename}")
-    else:
-        print(f"Unrecognised platform {platform_name}")
-
-
 contact_string = (
     f"\nIf you have any questions, please email me at {_get_config().get('email')}"
 )
@@ -58,7 +44,7 @@ def get_missing_names(path, names):
     return missing_list
 
 
-def create_docx_feedback(path, names, missing):
+def create_feedback_file(path, names, missing, filename="feedback.docx"):
     """
     :param path:    path to files
     :param names:   list of names
@@ -66,8 +52,7 @@ def create_docx_feedback(path, names, missing):
     """
 
     # change to path where file should be saved
-    os.chdir(path)
-    filename = "feedback.docx"
+    file_path = os.path.join(path, filename)
     d = Document()
 
     # create table to store feedback
@@ -86,8 +71,22 @@ def create_docx_feedback(path, names, missing):
             row[1].text = contact_string
 
     # account for file already existing
-    if os.path.exists(filename):
-        os.remove(filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
 
-    d.save(filename)
-    _open_file(filename)
+    d.save(file_path)
+    return file_path
+
+
+def open_feedback_file(filename):
+    # open file with default app
+    platform_name = platform.system()
+    if platform_name == "Linux":
+        os.system(f"xdg-open {filename}")
+    elif platform_name == "Windows":
+        os.system(f"start {filename}")
+    # OSX
+    elif platform_name == "Darwin":
+        os.system(f"open {filename}")
+    else:
+        print(f"Unrecognised platform {platform_name}")
