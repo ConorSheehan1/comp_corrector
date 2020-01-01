@@ -1,0 +1,28 @@
+name: ci
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python 3.6
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.6
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc musl-dev libxml2-dev libxslt-dev python-dev
+        python -m pip install --upgrade pip
+        pip install pipenv
+        pipenv install --dev
+    - name: Run tests
+      run: |
+        pipenv run tests
+    - name: Lint with black
+      run: |
+        pipenv run black --check .
