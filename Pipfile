@@ -18,7 +18,7 @@ nose = "*"
 lxml = "==3.7.3"
 olefile = "==0.44"
 python-docx = "==0.8.6"
-Pillow = "==4.0.0"
+Pillow = "==6.2.0"
 pyyaml = "*"
 
 [requires]
