@@ -8,7 +8,7 @@
 
 ## How to
 Run ```pipenv run ui``` You should see the interface below:
-![UI image](images/UI.PNG)
+![UI image](.github/imagesUI.PNG)
 
 1. Click <kbd>choose zip</kbd> to use the default OS file chooser, or enter the path to your zip directly into the **path to zipfile** field
 2. Paste the names of the students you need to correct into the **list of names** field  
@@ -18,15 +18,15 @@ Run ```pipenv run ui``` You should see the interface below:
 
 ## Example
 1. After clicking <kbd>choose zip</kbd> the default file system your OS uses will open. Choose the zip you want to extract.
-![choose zip](images/choose_zip.PNG)
+![choose zip](.github/imageschoose_zip.PNG)
 2. In this example I will leave the list of names blank so all files in the zip are extracted and use the default settings so all C files are compiled and zips are deleted after extraction.
 4. After clicking <kbd>start</kbd> all files in the zip are extracted.
-![first folder](images/first_folder.PNG)
+![first folder](.github/imagesfirst_folder.PNG)
 5. If the folders extracted contain zips, they are also extracted. For example in this case, both user1 and user2 contained a zip file, so they were extracted.
 6. All C files within the folders (2.c and example.C) are then compiled.
-![compiled](images/compiled.PNG) 
+![compiled](.github/imagescompiled.PNG) 
 7. Once the program completes execution the **finished** label will appear.
-![finished](images/success.PNG) 
+![finished](.github/imagessuccess.PNG) 
 
 ## Preferences
 1. **safe mode** creates a new folder with the same name as the zip and copies the main zip to it before running anything. When enabled the program essentially uses "extract to folder", when disabled it uses "extract here".
@@ -37,7 +37,7 @@ Run ```pipenv run ui``` You should see the interface below:
 ## Warnings
 1. **Be careful, there's multiple files in the current directory** occurs if safe mode is disabled and there is more one file in the path in the **path to zipfile** field. This warning is to alert the user that the program has access to all files in the directory the zip is in, and may extract or compile files the user did not want to be extracted or compiled.
 2. **The following students seem to be missing files** occurs when the program does not find any files beginning with a name the user has provided in the zip file chosen.
-![warning missing name](images/warning.PNG)
+![warning missing name](.github/imageswarning.PNG)
  
 
 ## Errors
@@ -47,7 +47,7 @@ Run ```pipenv run ui``` You should see the interface below:
 4. **Exception extracting files** Occurs if there is a general exception causing the program to stop execution.
 5. **Exception creating feedback.docx** Occurs most likely due to an import error getting docx, or permission being denied to write to feedback.docx because it is already open.
 6. **You must select a zip file to begin** Occurs if the path in the **path to zipfile** field does not end in ".zip"
-![error compiling files](images/error.PNG)
+![error compiling files](.github/imageserror.PNG)
 
 
 ## Development
