@@ -5,10 +5,10 @@ import platform
 from docx import Document
 from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
+from typing import List, Dict
 
 
-def _get_config():
-    # return yaml.dump(yaml.load(os.path.join("..", "..", "config.yml")))
+def _get_config() -> Dict:
     with open("config.yml") as config:
         return yaml.load(config, Loader=yaml.FullLoader)
 
@@ -18,37 +18,34 @@ contact_string = (
 )
 
 
-def format_names(names):
+def format_names(names: str) -> List[str]:
     names = names.split("\n")
     # remove single quotes in all names
     return list(map(lambda n: n.replace("'", ""), names))
 
 
-def get_missing_names(path, names):
+def get_missing_names(path: str, names: str) -> List[str]:
     """
     :param path:  path to files
     :param names: list of names
     :return:      list of any names without a corresponding file in the path
     """
 
-    missing_list = []
-    for name in names:
-        # if no files in the directory start with the students name, add it to list of missing names
-        # note: must be /*, /*/ will cause basename to return ''
-        if not any(
-            os.path.basename(file_path).startswith(name)
-            for file_path in glob.glob(f"{path}/*")
-        ):
-            missing_list.append(name)
-
-    return missing_list
+    file_names = [os.path.basename(file_path) for file_path in glob.glob(f"{path}/*")]
+    return [
+        name
+        for name in names
+        if not any((file_name.startswith(name) for file_name in file_names))
+    ]
 
 
-def create_feedback_file(path, names, missing, filename="feedback.docx"):
+def create_feedback_file(
+    path: str, names: List[str], missing: List[str], filename="feedback.docx"
+) -> str:
     """
-    :param path:    path to files
-    :param names:   list of names
-    :return:        None
+    :param path:        path to files
+    :param names:       list of names
+    :return file_path:  path to generated feedback file
     """
 
     # change to path where file should be saved
@@ -78,7 +75,7 @@ def create_feedback_file(path, names, missing, filename="feedback.docx"):
     return file_path
 
 
-def open_feedback_file(filename):
+def open_feedback_file(filename: str):
     # open file with default app
     platform_name = platform.system()
     if platform_name == "Linux":

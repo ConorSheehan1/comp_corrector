@@ -7,9 +7,18 @@ from subprocess import PIPE
 
 # TODO: refactor to stop passing compiler and capture_output around. Use class?
 # TODO: add java supprt?
-def _compile_cfile(file_path, cwd, compiler, capture_output):
+def _compile_cfile(
+    file_path: str, cwd: str, compiler: str, capture_output: bool
+) -> int:
     """
     This function runs commands on the OS.
+    It tries to compile the file within cwd to handle relative imports.
+    It returns the status code of the compile command.
+    :param file_path:
+    :param cwd: current working directory
+    :compiler: name of compiler executable
+    :capture_output: flag to capture output if True 
+    :return: status code
     """
     # if file doesn't end with .c, don't bother compiling, don't increment error count
     if not file_path.lower().endswith(".c"):
@@ -30,7 +39,10 @@ def _compile_cfile(file_path, cwd, compiler, capture_output):
     return subprocess.run(command, **kwargs).returncode
 
 
-def _compile_all_cfiles(folder, compiler, capture_output):
+def _compile_all_cfiles(folder: str, compiler: str, capture_output: bool) -> int:
+    """
+    Compiles all .c files in folder.
+    """
     errors = 0
     for c_file in glob.glob(f"{folder}/*.c"):
         # compile files in subfolder
@@ -41,8 +53,9 @@ def _compile_all_cfiles(folder, compiler, capture_output):
 
 # TODO: return dict of students and files which failed to compile.
 # Then add to feedback.docx.
-def compile_c(path, compiler="gcc", capture_output=False):
+def compile_c(path: str, compiler="gcc", capture_output=False) -> int:
     """
+    For each student submission, compile their c files and count the compiler errors.
     :param path:      path to files
     :param compiler:  name of compiler to use
     :return:          number of files which fail to compile (-1 if exception occurs)
