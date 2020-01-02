@@ -2,7 +2,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Requirements
-1. python3 [tkinter (not provided by pipenv)]  
+1. python 3.6 [tkinter (not provided by pipenv)]  
     ```sudo apt-get install python3 python3-pip python3-tk```
 2. gcc (in order to use the compile files option)  
     ```sudo apt-get install gcc musl-dev```
