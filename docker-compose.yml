@@ -1,0 +1,9 @@
+version: '3'
+services:
+  ui:
+    build: .
+    image: comp_corrector
+    volumes:
+      - .:/home/comp_corrector
+# TODO: get nose on path? or merge change to pytest first?
+# docker-compose run ui pipenv run tests
