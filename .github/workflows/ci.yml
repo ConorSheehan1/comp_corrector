@@ -5,7 +5,12 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # ubuntu-18.04 currently same as ubuntu-latest
+        # TODO: windows-latest (windows server 2019) fails at pipenv install when creating virtual env
+        os: [ubuntu-16.04, ubuntu-18.04, macos-latest]
 
     steps:
     - uses: actions/checkout@v1
