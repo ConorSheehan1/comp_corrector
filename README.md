@@ -11,9 +11,14 @@
 
 
 ## How to use
-1. Install pipenv
-2. Run ```pipenv install```
-3. Run ```pipenv run ui``` You should see the interface below:
+1. Install pipenv  
+    ```pip install pipenv```
+2. Install required packages  
+    ```pipenv install```
+3. Run the UI  
+    ```pipenv run ui```  
+    
+You should see the interface below:
 ![UI image](.github/images/UI.PNG)
 
 1. Click <kbd>choose zip</kbd> to use the default OS file chooser, or enter the path to your zip directly into the **path to zipfile** field
