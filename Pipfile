@@ -13,6 +13,7 @@ lint = "black ."
 black = "*"
 rope = "*"
 pytest = "*"
+atomicwrites = "*"
 
 [packages]
 lxml = "==3.7.3"
