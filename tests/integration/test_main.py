@@ -95,7 +95,7 @@ class TestMainSafeMode(unittest.TestCase):
 
         # gcc output always add .exe on windows
         if platform.system() == "Windows":
-            compiled_filed = f"{compiled_file}.exe"
+            compiled_file = f"{compiled_file}.exe"
 
         assert not os.path.exists(compiled_file)
         # hide output for tests
