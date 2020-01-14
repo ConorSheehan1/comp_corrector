@@ -52,7 +52,7 @@ def setup_safe_mode(cwd: str, zip_path: str) -> Tuple[str, str]:
     :return: tuple of new safe dir and zip path
     """
     # make dir same name as zip (remove file extension, add slash)
-    safe_dirname = os.path.basename(zip_path).split(".")[0]
+    safe_dirname = os.path.splitext(os.path.basename(zip_path))[0]
     safe_cwd = os.path.join(cwd, safe_dirname)
     # create safe dir if it doesn't exist
     if not os.path.exists(safe_cwd):

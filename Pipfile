@@ -8,11 +8,13 @@ ui = "python src/ui.py"
 tests = "python -m pytest tests"
 debug_tests = "python -m pytest -s tests"
 lint = "black ."
+sysver = "python -c 'import platform; print(platform.system())'"
 
 [dev-packages]
 black = "*"
 rope = "*"
 pytest = "*"
+atomicwrites = "*"
 
 [packages]
 lxml = "==3.7.3"

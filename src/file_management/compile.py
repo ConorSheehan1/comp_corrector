@@ -11,8 +11,7 @@ def _compile_cfile(
     file_path: str, cwd: str, compiler: str, capture_output: bool
 ) -> int:
     """
-    This function runs commands on the OS.
-    It tries to compile the file within cwd to handle relative imports.
+    This function tries to compile the file within cwd to handle relative imports.
     It returns the status code of the compile command.
     :param file_path:
     :param cwd: current working directory
