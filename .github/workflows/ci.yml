@@ -28,7 +28,10 @@ jobs:
         pip install pipenv
     - name: Install python packages
       run: |
-        pipenv install --verbose --dev
+        pipenv install --dev
+    - name: List system version
+        run: |
+          pipenv run sysver
     - name: Run tests
       run: |
         pipenv run tests
