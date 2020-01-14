@@ -12,6 +12,7 @@ import unittest
 import os
 import shutil
 import re
+import platform
 
 # functions under test
 from src.file_management.zip_archives import unzip, unzip_outer, setup_safe_mode
@@ -91,9 +92,15 @@ class TestMainSafeMode(unittest.TestCase):
         """
         # compiled_file = self.example_student_code.replace(".c", "")
         compiled_file = re.sub(r"\.c$", "", self.example_student_code)
+
+        # gcc output always add .exe on windows
+        if platform.system() == "Windows":
+            compiled_filed = f"{compiled_file}.exe"
+
         assert not os.path.exists(compiled_file)
         # hide output for tests
         errors = compile_c(self.safe_cwd, capture_output=True)
+        assert errors == 1
         assert os.path.exists(compiled_file)
 
     def test_06_feedback(self):
