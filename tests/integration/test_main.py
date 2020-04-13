@@ -13,6 +13,7 @@ import os
 import shutil
 import re
 import platform
+from docx import Document
 
 # functions under test
 from src.file_management.zip_archives import unzip, unzip_outer, setup_safe_mode
@@ -29,6 +30,7 @@ class TestMainSafeMode(unittest.TestCase):
         unittest.TestCase.__init__(self, methodName)
         self.safe_cwd = self.__class__.safe_cwd
         self.zip_path = os.path.join(self.cwd, "example.zip")
+        self.example_feedback_file = os.path.join(self.cwd, "example_feedback.docx")
         self.safe_zip_path = os.path.join(self.safe_cwd, "example.zip")
         self.example_student_dir = os.path.join(
             self.safe_cwd, "final_fake_student_2012347"
@@ -103,7 +105,7 @@ class TestMainSafeMode(unittest.TestCase):
         assert errors == 1
         assert os.path.exists(compiled_file)
 
-    def test_06_feedback(self):
+    def test_06_feedback_exists(self):
         """
         create_feedback_file should create feedback.docx
         """
@@ -111,6 +113,13 @@ class TestMainSafeMode(unittest.TestCase):
         create_feedback_file(self.safe_cwd, self.all_names, self.missing_names)
         assert os.path.exists(self.feedback_file)
 
+    def test_07_feedback_content(self):
+        expected_table = Document(self.example_feedback_file).tables[0]
+        actual_table = Document(self.feedback_file).tables[0]
+
+        for expected_row, actual_row in zip(expected_table.rows, actual_table.rows):
+            for expected_cell, actual_cell in zip(expected_row.cells, actual_row.cells):
+                assert expected_cell.text == actual_cell.text
 
 if __name__ == "__main__":
     unittest.main()
