@@ -20,7 +20,7 @@
 3. Run the UI  
     ```pipenv run ui```  
     
-You should see the interface below:
+You should see the interface below:  
 ![UI image](.github/images/UI.PNG)
 
 1. Click <kbd>choose zip</kbd> to use the default OS file chooser, or enter the path to your zip directly into the **path to zipfile** field
