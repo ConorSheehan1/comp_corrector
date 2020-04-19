@@ -13,6 +13,7 @@ import os
 import shutil
 import re
 import platform
+from docx import Document
 
 # functions under test
 from src.file_management.zip_archives import unzip, unzip_outer, setup_safe_mode
@@ -20,7 +21,7 @@ from src.file_management.feedback import get_missing_names, create_feedback_file
 from src.file_management.compile import compile_c
 
 
-class TestMainSafeMode(unittest.TestCase):
+class Base:
     # needed as class variables to run teardown after all tests, instead of each test.
     cwd = os.path.join("tests", "fixtures")
     safe_cwd = os.path.join(cwd, "example")
@@ -29,6 +30,7 @@ class TestMainSafeMode(unittest.TestCase):
         unittest.TestCase.__init__(self, methodName)
         self.safe_cwd = self.__class__.safe_cwd
         self.zip_path = os.path.join(self.cwd, "example.zip")
+        self.example_feedback_file = os.path.join(self.cwd, "example_feedback.docx")
         self.safe_zip_path = os.path.join(self.safe_cwd, "example.zip")
         self.example_student_dir = os.path.join(
             self.safe_cwd, "final_fake_student_2012347"
@@ -59,6 +61,8 @@ class TestMainSafeMode(unittest.TestCase):
         assert os.path.exists(self.safe_cwd)
         assert os.path.exists(self.zip_path)
 
+
+class TestMainSafeModeSharedState(Base, unittest.TestCase):
     def test_02_unzip(self):
         """
         unzip_outer should unzip the main .zip archive
@@ -103,13 +107,36 @@ class TestMainSafeMode(unittest.TestCase):
         assert errors == 1
         assert os.path.exists(compiled_file)
 
-    def test_06_feedback(self):
+    def test_06_feedback_exists(self):
         """
         create_feedback_file should create feedback.docx
         """
         assert not os.path.exists(self.feedback_file)
         create_feedback_file(self.safe_cwd, self.all_names, self.missing_names)
         assert os.path.exists(self.feedback_file)
+
+    def test_07_feedback_content(self):
+        expected_table = Document(self.example_feedback_file).tables[0]
+        actual_table = Document(self.feedback_file).tables[0]
+
+        for expected_row, actual_row in zip(expected_table.rows, actual_table.rows):
+            for expected_cell, actual_cell in zip(expected_row.cells, actual_row.cells):
+                assert expected_cell.text == actual_cell.text
+
+
+class TestMainSafeModeSpecificStudents(Base, unittest.TestCase):
+    def test_02_unzip(self):
+        """
+        when students are passed, unzip_outer should only extract files containing that students name
+        """
+        assert not os.path.exists(self.example_student_dir)
+        unzip_outer(self.safe_zip_path, ["fake_student", "other_fake_student"])
+
+        # final_fake_student is the only one not extracted, all others are extracted
+        assert not os.path.exists(self.example_student_dir)
+        for dirname in ["fake_student_2012345", "other_fake_student_2012346"]:
+            student_dir = os.path.join(self.safe_cwd, dirname)
+            assert os.path.exists(student_dir)
 
 
 if __name__ == "__main__":

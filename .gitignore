@@ -131,3 +131,6 @@ dmypy.json
 # Editor config
 .idea
 .vscode
+
+# Docx lock file
+*.~lock*
