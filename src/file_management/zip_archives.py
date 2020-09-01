@@ -10,7 +10,7 @@ def unzip(path: str, rm_zips=True) -> List[str]:
     unzips all zip files submitted by students.
     :param path: path to zip file
     :param rm_zips: bool to remove zip archives once extracted
-    :return errors: list of zip file names that failed to extrac 
+    :return errors: list of zip file names that failed to extract
     """
     errors = []
     for folder in glob.glob(f"{path}/*/"):

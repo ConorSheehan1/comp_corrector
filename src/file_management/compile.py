@@ -16,7 +16,7 @@ def _compile_cfile(
     :param file_path:
     :param cwd: current working directory
     :compiler: name of compiler executable
-    :capture_output: flag to capture output if True 
+    :capture_output: flag to capture output if True
     :return: status code
     """
     # if file doesn't end with .c, don't bother compiling, don't increment error count
