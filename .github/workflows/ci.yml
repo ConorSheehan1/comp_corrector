@@ -2,8 +2,11 @@ name: ci
 
 on:
   push:
+  pull_request:
+    - dependabot*
   schedule:
       - cron: '0 0 * * 1' # Every monday at midnight
+  workflow_dispatch: # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
 
 jobs:
   build:
