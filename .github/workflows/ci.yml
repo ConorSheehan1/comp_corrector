@@ -11,7 +11,7 @@ on:
     paths-ignore:
       - README.md # don't run for readme changes.
   pull_request:
-    - dependabot*
+    - 'dependabot*'
   schedule:
     - cron: '0 0 * * 1' # Every monday at midnight
 
