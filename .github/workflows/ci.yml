@@ -10,8 +10,8 @@ on:
       - '*.*' # don't run ci on tags, should already have run on commit tag points to.
     paths-ignore:
       - README.md # don't run for readme changes.
-  pull_request:
-    - 'dependabot*'
+  # pull_request:
+  #   - 'dependabot*'
   schedule:
     - cron: '0 0 * * 1' # Every monday at midnight
 
