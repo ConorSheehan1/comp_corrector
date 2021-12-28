@@ -1,7 +1,9 @@
-[![Build Status](https://github.com/ConorSheehan1/comp_corrector/workflows/ci/badge.svg)](https://github.com/ConorSheehan1/comp_corrector/actions/)
+[![Build Status](https://github.com/ConorSheehan1/comp_corrector/workflows/ci/badge.svg)](https://github.com/ConorSheehan1/comp_corrector/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Python version](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/ConorSheehan1/comp_corrector/master/.github/workflows/ci.yml&label=python&query=$.jobs.build.steps[1].with['python-version'])](https://github.com/ConorSheehan1/comp_corrector/blob/master/.github/workflows/ci.yml#L19)
+
+[![Operating Systems](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/ConorSheehan1/comp_corrector/master/.github/workflows/ci.yml&label=os&query=$.jobs.build.strategy.matrix.os)](https://github.com/ConorSheehan1/comp_corrector/blob/master/.github/workflows/ci.yml#L25)
+[![Python versions](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/ConorSheehan1/comp_corrector/master/.github/workflows/ci.yml&label=python&query=$.jobs.build.strategy.matrix.python)](https://github.com/ConorSheehan1/comp_corrector/blob/master/.github/workflows/ci.yml#L26)
 
 ## Requirements
 1. python 3.6 [tkinter (not provided by poetry)]  
