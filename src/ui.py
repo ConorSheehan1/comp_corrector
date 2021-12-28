@@ -16,7 +16,7 @@ from file_management.zip_archives import setup_safe_mode, unzip, unzip_outer
 
 class App(object):
     def __init__(self):
-        self.version = "0.1.0"
+        self.version = "0.1.1"
         self.root = Tk()
 
         # set default dimensions, color and title
