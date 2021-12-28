@@ -1,15 +1,16 @@
+# Standard Library
 import glob
 import os
-import yaml
 import subprocess
 from subprocess import PIPE
+
+# Third party
+import yaml
 
 
 # TODO: refactor to stop passing compiler and capture_output around. Use class?
 # TODO: add java supprt?
-def _compile_cfile(
-    file_path: str, cwd: str, compiler: str, capture_output: bool
-) -> int:
+def _compile_cfile(file_path: str, cwd: str, compiler: str, capture_output: bool) -> int:
     """
     This function tries to compile the file within cwd to handle relative imports.
     It returns the status code of the compile command.
@@ -31,11 +32,11 @@ def _compile_cfile(
     # TODO: when python 3.7 works with lxml, use capture_output=True here instead of stderr=PIPE
     kwargs = {"cwd": cwd}
     if capture_output:
-        kwargs["stdout"] = PIPE
-        kwargs["stderr"] = PIPE
+        kwargs["stdout"] = PIPE  # type: ignore
+        kwargs["stderr"] = PIPE  # type: ignore
 
     # will return 0 if successfully compiled, 1 if not
-    return subprocess.run(command, **kwargs).returncode
+    return subprocess.run(command, **kwargs).returncode  # type: ignore
 
 
 def _compile_all_cfiles(folder: str, compiler: str, capture_output: bool) -> int:

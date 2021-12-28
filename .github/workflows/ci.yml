@@ -49,3 +49,6 @@ jobs:
     - name: Lint with black
       run: |
         poetry run task ci_lint
+    - name: Lint with isort
+      run: |
+        poetry run task ci_isort

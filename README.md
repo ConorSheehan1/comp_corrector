@@ -73,3 +73,13 @@ Tests:
 
 Linter:  
 ```poetry run task lint```
+
+#### Version management
+```bash
+# pass args e.g. patch, minor, major, choose to commit changes or not
+poetry run bumpversion --commit --tag patch
+# once the tag is built by the release action, check the attached .tar is installable.
+# e.g. `pip install git+https://github.com/ConorSheehan1/shot@v0.1.1`
+# if it is update the release draft and pre-release state.
+# for dry run use: poetry run bumpversion patch --dry-run --verbose
+```

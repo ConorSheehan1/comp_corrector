@@ -6,7 +6,7 @@ authors = ["Conor Sheehan <conor.sheehan.dev@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.6.1"
 lxml = "^4.6"
 python-docx = "^0.8"
 pyyaml = "*"
@@ -17,18 +17,28 @@ rope = "*"
 pytest = "*"
 atomicwrites = "*"
 taskipy = "^1.9.0"
+bump2version = "^1.0.1"
+isort = "^5.10.1"
+mypy = "^0.930"
 
 [tool.taskipy.tasks]
-# bumpversion = "bumpversion"
+bumpversion = "bumpversion"
 ui = "python src/ui.py"
 ci_lint = "black --check ."
-# ci_isort = "isort --check --diff ."
-# isort = 'isort .'
+ci_isort = "isort --check --diff ."
+isort = 'isort .'
 lint = "black ."
-mypy = "mypy --ignore-missing-imports shot.py"
+mypy = "mypy --ignore-missing-imports src"
 tests = "python -m pytest tests"
 debug_tests = "python -m pytest -s tests"
 sysver = "python -c 'import platform; print(platform.system())'"
+
+# linter configs
+[tool.isort]
+profile = "black"
+
+[tool.black]
+line_length = 100
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
