@@ -16,6 +16,7 @@ from file_management.zip_archives import unzip, unzip_outer, setup_safe_mode
 
 class App(object):
     def __init__(self):
+        self.version = "0.1.0"
         self.root = Tk()
 
         # set default dimensions, color and title
@@ -24,7 +25,7 @@ class App(object):
         self.green = "#93b185"
 
         self.root.geometry("600x450")
-        self.root.wm_title("CompCorrector")
+        self.root.wm_title(f"CompCorrector v{self.version}")
 
         self.label = Label(self.root, text="path to zipfile")
         self.label.pack(pady=5)
