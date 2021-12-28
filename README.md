@@ -1,24 +1,26 @@
-[![Build Status](https://github.com/ConorSheehan1/comp_corrector/workflows/ci/badge.svg)](https://github.com/ConorSheehan1/comp_corrector/actions/)
+[![Build Status](https://github.com/ConorSheehan1/comp_corrector/workflows/ci/badge.svg)](https://github.com/ConorSheehan1/comp_corrector/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Python version](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/ConorSheehan1/comp_corrector/master/.github/workflows/ci.yml&label=python&query=$.jobs.build.steps[1].with['python-version'])](https://github.com/ConorSheehan1/comp_corrector/blob/master/.github/workflows/ci.yml#L19)
+
+[![Operating Systems](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/ConorSheehan1/comp_corrector/master/.github/workflows/ci.yml&label=os&query=$.jobs.build.strategy.matrix.os)](https://github.com/ConorSheehan1/comp_corrector/blob/master/.github/workflows/ci.yml#L25)
+[![Python versions](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/ConorSheehan1/comp_corrector/master/.github/workflows/ci.yml&label=python&query=$.jobs.build.strategy.matrix.python)](https://github.com/ConorSheehan1/comp_corrector/blob/master/.github/workflows/ci.yml#L26)
 
 ## Requirements
-1. python 3.6 [tkinter (not provided by pipenv)]  
+1. python 3.6 [tkinter (not provided by poetry)]  
     ```sudo apt-get install python3 python3-pip python3-tk```
 2. gcc (in order to use the compile files option)  
     ```sudo apt-get install gcc musl-dev```
-3. You may need to install libxml before running ```pipenv install```  
+3. You may need to install libxml before running ```poetry install```  
     ```sudo apt-get install libxml2-dev libxslt-dev python-dev```
 
 
 ## How to use
-1. Install pipenv  
-    ```pip install pipenv```
+1. Install poetry  
+    ```pip install poetry```
 2. Install required packages  
-    ```pipenv install```
+    ```poetry install```
 3. Run the UI  
-    ```pipenv run ui```  
+    ```poetry run task ui```  
     
 You should see the interface below:  
 ![UI image](.github/images/UI.PNG)
@@ -65,11 +67,9 @@ You should see the interface below:
 
 
 ## Development
-Install:  
-```pipenv install --dev```
 
 Tests:  
-```pipenv run tests```
+```poetry run task tests```
 
 Linter:  
-```pipenv run lint```
+```poetry run task lint```

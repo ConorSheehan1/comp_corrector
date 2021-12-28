@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "comp_corrector"
+version = "0.1.0"
+description = "Desktop app using tkinter to speed up cs homework corrections"
+authors = ["Conor Sheehan <conor.sheehan.dev@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+lxml = "^4.6"
+python-docx = "^0.8"
+pyyaml = "*"
+
+[tool.poetry.dev-dependencies]
+black = "*"
+rope = "*"
+pytest = "*"
+atomicwrites = "*"
+taskipy = "^1.9.0"
+
+[tool.taskipy.tasks]
+# bumpversion = "bumpversion"
+ui = "python src/ui.py"
+ci_lint = "black --check ."
+# ci_isort = "isort --check --diff ."
+# isort = 'isort .'
+lint = "black ."
+mypy = "mypy --ignore-missing-imports shot.py"
+tests = "python -m pytest tests"
+debug_tests = "python -m pytest -s tests"
+sysver = "python -c 'import platform; print(platform.system())'"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
