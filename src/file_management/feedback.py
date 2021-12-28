@@ -20,9 +20,8 @@ contact_string = f"\nIf you have any questions, please email me at {_get_config(
 
 
 def format_names(names: str) -> List[str]:
-    names = names.split("\n")
     # remove single quotes in all names
-    return list(map(lambda n: n.replace("'", ""), names))
+    return [n.replace("'", "") for n in names.split("\n")]
 
 
 def get_missing_names(path: str, names: str) -> List[str]:

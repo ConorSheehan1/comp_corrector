@@ -19,6 +19,7 @@ atomicwrites = "*"
 taskipy = "^1.9.0"
 bump2version = "^1.0.1"
 isort = "^5.10.1"
+mypy = "^0.930"
 
 [tool.taskipy.tasks]
 bumpversion = "bumpversion"
@@ -27,7 +28,7 @@ ci_lint = "black --check ."
 ci_isort = "isort --check --diff ."
 isort = 'isort .'
 lint = "black ."
-mypy = "mypy --ignore-missing-imports shot.py"
+mypy = "mypy --ignore-missing-imports src"
 tests = "python -m pytest tests"
 debug_tests = "python -m pytest -s tests"
 sysver = "python -c 'import platform; print(platform.system())'"
