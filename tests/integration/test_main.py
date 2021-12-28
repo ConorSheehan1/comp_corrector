@@ -4,21 +4,25 @@ They write to the file system (in tests/fixtures/example).
 They rely on gcc being available.
 """
 
+# Standard Library
+# TODO: stub file system?
+import os
+import platform
+import re
+import shutil
+
 # TODO: rename to test_ui and setup mocking with tkinter
 # for now, run all the steps that ui.py would run in main, but without errors and warnings for the user
 import unittest
 
-# TODO: stub file system?
-import os
-import shutil
-import re
-import platform
+# Third party
 from docx import Document
 
-# functions under test
-from src.file_management.zip_archives import unzip, unzip_outer, setup_safe_mode
-from src.file_management.feedback import get_missing_names, create_feedback_file
 from src.file_management.compile import compile_c
+from src.file_management.feedback import create_feedback_file, get_missing_names
+
+# functions under test
+from src.file_management.zip_archives import setup_safe_mode, unzip, unzip_outer
 
 
 class Base:
@@ -32,9 +36,7 @@ class Base:
         self.zip_path = os.path.join(self.cwd, "example.zip")
         self.example_feedback_file = os.path.join(self.cwd, "example_feedback.docx")
         self.safe_zip_path = os.path.join(self.safe_cwd, "example.zip")
-        self.example_student_dir = os.path.join(
-            self.safe_cwd, "final_fake_student_2012347"
-        )
+        self.example_student_dir = os.path.join(self.safe_cwd, "final_fake_student_2012347")
         self.example_student_code = os.path.join(
             self.example_student_dir, "assignment1", "assignment1.c"
         )
@@ -84,9 +86,7 @@ class TestMainSafeModeSharedState(Base, unittest.TestCase):
         """
         get_missing_names should return names of students who didn't submit anything
         """
-        missing_names = get_missing_names(
-            self.safe_cwd, self.all_names + self.missing_names
-        )
+        missing_names = get_missing_names(self.safe_cwd, self.all_names + self.missing_names)
         self.assertListEqual(self.missing_names, missing_names)
 
     def test_05_compile(self):

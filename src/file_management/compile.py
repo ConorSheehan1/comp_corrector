@@ -1,15 +1,16 @@
+# Standard Library
 import glob
 import os
-import yaml
 import subprocess
 from subprocess import PIPE
+
+# Third party
+import yaml
 
 
 # TODO: refactor to stop passing compiler and capture_output around. Use class?
 # TODO: add java supprt?
-def _compile_cfile(
-    file_path: str, cwd: str, compiler: str, capture_output: bool
-) -> int:
+def _compile_cfile(file_path: str, cwd: str, compiler: str, capture_output: bool) -> int:
     """
     This function tries to compile the file within cwd to handle relative imports.
     It returns the status code of the compile command.

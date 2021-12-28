@@ -1,17 +1,17 @@
-from tkinter import Tk, Label, StringVar, Entry, Button, END, IntVar, Checkbutton
-from tkinter.filedialog import askopenfilename
-
-import os
+# Standard Library
 import glob
+import os
+from tkinter import END, Button, Checkbutton, Entry, IntVar, Label, StringVar, Tk
+from tkinter.filedialog import askopenfilename
 
 from file_management.compile import compile_c
 from file_management.feedback import (
     create_feedback_file,
-    get_missing_names,
     format_names,
+    get_missing_names,
     open_feedback_file,
 )
-from file_management.zip_archives import unzip, unzip_outer, setup_safe_mode
+from file_management.zip_archives import setup_safe_mode, unzip, unzip_outer
 
 
 class App(object):
@@ -32,9 +32,7 @@ class App(object):
 
         # text entry for zip path
         self.zip_dir = StringVar()
-        self.entry_zip_dir = Entry(
-            self.root, textvariable=self.zip_dir, width="400", bg=self.grey
-        )
+        self.entry_zip_dir = Entry(self.root, textvariable=self.zip_dir, width="400", bg=self.grey)
         self.entry_zip_dir.pack(pady=5)
 
         # open zip button
@@ -52,9 +50,7 @@ class App(object):
 
         # text entry for names
         self.names = StringVar()
-        self.entry_names = Entry(
-            self.root, textvariable=self.names, width="400", bg=self.grey
-        )
+        self.entry_names = Entry(self.root, textvariable=self.names, width="400", bg=self.grey)
         self.entry_names.pack(pady=5)
 
         # check-boxes
@@ -125,9 +121,7 @@ class App(object):
         self.error_label.pack(pady=5)
 
         # label for warnings
-        self.warning_label = Label(
-            self.root, text="", foreground=self.yellow, bg=self.grey
-        )
+        self.warning_label = Label(self.root, text="", foreground=self.yellow, bg=self.grey)
         self.warning_label.pack(pady=5)
 
         # label for completion
@@ -137,14 +131,10 @@ class App(object):
         self.root.mainloop()
 
     def append_warning(self, warning_text):
-        self.warning_label.configure(
-            text=f"{self.warning_label.cget('text')} {warning_text}\n"
-        )
+        self.warning_label.configure(text=f"{self.warning_label.cget('text')} {warning_text}\n")
 
     def append_error(self, error_text):
-        self.error_label.configure(
-            text=f"{self.error_label.cget('text')} {error_text}\n"
-        )
+        self.error_label.configure(text=f"{self.error_label.cget('text')} {error_text}\n")
 
     def flush_labels(self):
         self.warning_label.configure(text="")
@@ -222,9 +212,7 @@ class App(object):
 
         missing_names = get_missing_names(cwd, names)
         if missing_names:
-            self.append_warning(
-                f"The following students seem to be missing files: {missing_names}"
-            )
+            self.append_warning(f"The following students seem to be missing files: {missing_names}")
 
         if self.compile.get():
             self.run_compile(cwd)

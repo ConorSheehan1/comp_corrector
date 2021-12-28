@@ -1,11 +1,14 @@
-import os
-import yaml
+# Standard Library
 import glob
+import os
 import platform
+from typing import Dict, List
+
+# Third party
+import yaml
 from docx import Document
-from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
-from typing import List, Dict
+from docx.oxml.ns import nsdecls
 
 
 def _get_config() -> Dict:
@@ -13,9 +16,7 @@ def _get_config() -> Dict:
         return yaml.load(config, Loader=yaml.FullLoader)
 
 
-contact_string = (
-    f"\nIf you have any questions, please email me at {_get_config().get('email')}"
-)
+contact_string = f"\nIf you have any questions, please email me at {_get_config().get('email')}"
 
 
 def format_names(names: str) -> List[str]:
@@ -33,9 +34,7 @@ def get_missing_names(path: str, names: str) -> List[str]:
 
     file_names = [os.path.basename(file_path) for file_path in glob.glob(f"{path}/*")]
     return [
-        name
-        for name in names
-        if not any((file_name.startswith(name) for file_name in file_names))
+        name for name in names if not any((file_name.startswith(name) for file_name in file_names))
     ]
 
 
